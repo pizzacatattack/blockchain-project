@@ -3,7 +3,7 @@ import pandas as pd
 import time
 
 
-#Locky is a well-researched ransomware case
+#Locky is a well-researched ransomware case from 2016, infected millions of users worldwide
 #Seed address here was just used for two transactions
 #However, one of those transactions involved 29 other unique input addresses
 #When multiple addresses are used for one input, those addresses likely all have the same owner/controlled by the same person or entity
@@ -315,4 +315,47 @@ df_clustered_addresses = pd.DataFrame({
 })
 df_clustered_addresses.to_csv(f"{case_name}_addresses_to_expand.csv", index=False)
 
+
+# -----------------------------
+# 13. Print sum received
+# -----------------------------
+
+#Print total received by all addresses in the cluster
+cluster_addresses = set(df_clusters["Address"])
+
+cluster_received = df_outputs[
+    df_outputs["Output Address"].isin(cluster_addresses)
+]
+
+total_received = cluster_received["Output Value"].sum()
+
+#Convert from satoshi to btc
+total_received_btc = total_received / 100000000
+
+print("Total Received (BTC)", f"{total_received_btc:.4f}")
+
+
+# -----------------------------
+# 14. Print sum received by each address plus top 5 receivers
+# -----------------------------
+
+#One address in this cluster received funds
+#More interesting analysis will be who all the addresses in the cluster sent funds to
+#Cluster received 3 BTC, sent 8 BTC -> forwarding funds
+received_by_address = (
+    cluster_received.groupby("Output Address")["Output Value"]
+    .sum()
+    .reset_index()
+    .sort_values(by="Output Value", ascending=False)
+)
+
+received_by_address["BTC"] = received_by_address["Output Value"] / 100000000
+
+print(received_by_address)
+
+#Not that useful here but will use it later
+top_5 = received_by_address.head(5)
+print(top_5)
+print("\n--- Top 5 Receiving Addresses ---")
+print(top_5[["Output Address", "BTC"]])
 
