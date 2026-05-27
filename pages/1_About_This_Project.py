@@ -2,10 +2,8 @@ import streamlit as st
 
 st.title("About This Project")
 
-st.write(
-    "Bitcoin transactions are public, but that does not mean they are easy to understand. "
-    "This student cyber security project uses blockchain data, visualisations and real-world case studies to make Bitcoin tracing concepts easier to explore."
-)
+st.write("Bitcoin transactions are public, but that does not mean they are easy to understand.")
+st.write("This student cyber security project uses blockchain data, visualisations and real-world case studies to make Bitcoin tracing concepts easier to explore.")
 
 st.warning(
     "This app can highlight suspicious-looking transaction patterns, but it cannot confirm who owns a Bitcoin address or whether a crime has occurred."
@@ -127,5 +125,5 @@ Possible future improvements include:
 st.header("Development note")
 
 st.write(
-    "This project was developed as an AI-assisted blockchain tracing application, with AI used as a development support tool for coding, implementation and debugging."
+    "This student project was developed as an AI-assisted blockchain tracing application, with AI used as a development support tool for coding, implementation and debugging."
 )
