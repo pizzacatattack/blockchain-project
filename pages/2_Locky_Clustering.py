@@ -439,6 +439,14 @@ def build_display_table(df, address_col, btc_col, role_func=None):
 # -----------------------------
 # App UI
 # -----------------------------
+st.title("Locky Ransomware Clustering Case Study")
+
+st.caption(
+    "This case study shows how address clustering can be used as an early step in Bitcoin tracing."
+)
+
+st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
+
 st.markdown(
     """
     <div class="case-card">
