@@ -439,11 +439,6 @@ def build_display_table(df, address_col, btc_col, role_func=None):
 # -----------------------------
 # App UI
 # -----------------------------
-st.markdown('<div class="btc-coin">₿</div>', unsafe_allow_html=True)
-
-st.title(CASE_NAME)
-st.caption("A case study showing Bitcoin address clustering with the common-input ownership heuristic.")
-
 st.markdown(
     """
     <div class="case-card">
@@ -459,9 +454,11 @@ st.markdown(
         <p>
             Later wallet activity shown in this case is simply following where the Bitcoin moved next, because ownership becomes less certain once funds leave the original cluster.
         </p>
+        <p>
+            This makes clustering a useful starting point for blockchain tracing. As tracing techniques improved, more advanced evasion methods such as peel chains and mixers emerged to make suspicious fund movement harder to follow.        </p>
     </div>
     """,
-    unsafe_allow_html=True,
+    unsafe_allow_html=True
 )
 
 st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)

@@ -74,7 +74,14 @@ Copy a transaction ID into the Transaction ID Explorer to view the full transact
 Open the case study pages from the sidebar to see tracing techniques applied to real-world examples.
 """)
 
+
 st.header("Case studies included")
+
+st.write(
+    "The case studies are arranged to show how blockchain tracing becomes increasingly difficult as more advanced evasion techniques are introduced. "
+    "The clustering case study shows how related Bitcoin addresses can sometimes be linked through transaction analysis. "
+    "The later peel-chain and mixer case studies explore techniques designed to make suspicious fund movement harder to follow."
+)
 
 col1, col2, col3 = st.columns(3)
 
