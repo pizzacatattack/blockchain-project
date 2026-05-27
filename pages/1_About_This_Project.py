@@ -4,13 +4,11 @@ st.title("About This Project")
 
 st.write(
     "Bitcoin transactions are public, but that does not mean they are easy to understand. "
-    "This project explores how blockchain data can be turned into clearer tables, graphs and case studies "
-    "to help people make sense of suspicious cryptocurrency movement."
+    "This student cyber security project uses blockchain data, visualisations and real-world case studies to make Bitcoin tracing concepts easier to explore."
 )
 
 st.warning(
-    "This application is designed for educational and exploratory analysis. Blockchain patterns can raise "
-    "investigative questions, but they do not prove ownership, identity or criminal activity."
+    "This app can highlight suspicious-looking transaction patterns, but it cannot confirm who owns a Bitcoin address or whether a crime has occurred."
 )
 
 st.header("What this project does")
@@ -117,8 +115,7 @@ st.header("Future improvements")
 st.markdown("""
 Possible future improvements include:
 
-- automated peel-chain detection
-- clearer risk scoring for mixer-like behaviour
+- suspicious activity checker for user-entered address
 - improved graph layouts for large transaction networks
 - exportable investigation reports
 - additional ransomware and hack case studies
