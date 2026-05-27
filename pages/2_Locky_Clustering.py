@@ -455,7 +455,8 @@ st.markdown(
             Later wallet activity shown in this case is simply following where the Bitcoin moved next, because ownership becomes less certain once funds leave the original cluster.
         </p>
         <p>
-            This makes clustering a useful starting point for blockchain tracing. As tracing techniques improved, more advanced evasion methods such as peel chains and mixers emerged to make suspicious fund movement harder to follow.        </p>
+            This makes clustering a useful starting point for blockchain tracing. As tracing techniques improved, more advanced evasion methods such as peel chains and mixers emerged to make suspicious fund movement harder to follow.
+        </p>
     </div>
     """,
     unsafe_allow_html=True
