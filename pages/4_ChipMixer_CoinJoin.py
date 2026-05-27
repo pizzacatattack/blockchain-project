@@ -459,9 +459,11 @@ st.markdown(
     <div class="case-card">
         <h3>Case focus</h3>
         <p>
-            This case starts from a ChipMixer-linked address discussed in research as appearing in thousands
-            of CoinJoin transactions. The app searches that address transaction history and selects a transaction
-            with strong CoinJoin-style structure.
+            This case study explores mixer behaviour using ChipMixer-style transaction patterns. Bitcoin sent into the mixer was designed to be separated from its original transaction history.
+            Users would then withdraw equivalent Bitcoin to fresh addresses, making the connection between deposit and withdrawal much harder to trace.
+        </p>
+        <p>
+            Users would then withdraw equivalent Bitcoin to fresh addresses, making the connection between deposit and withdrawal much harder to trace.
         </p>
         <p>
             The focus is not to prove the owner of every address. The focus is to show how many-input,
