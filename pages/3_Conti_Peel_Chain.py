@@ -940,10 +940,6 @@ st.write(
     "The pink nodes show the value peeled away from the main flow at each step."
 )
 st.pyplot(draw_peel_graph(peel_df, graph_steps=graph_steps), use_container_width=True)
-st.pyplot(
-    draw_peel_graph(peel_df, graph_steps=graph_steps),
-    use_container_width=True
-)
 
 st.subheader("2. Evidence table: step by step")
 st.write(
