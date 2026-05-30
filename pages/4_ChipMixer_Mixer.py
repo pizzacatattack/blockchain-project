@@ -426,8 +426,7 @@ def draw_mixer_structure_graph(tx: Dict[str, Any]) -> plt.Figure:
     ax.text(
         -0.5,
         -2.8,
-        f"Summary: {len(inputs)} inputs → 1 transaction → {len(outputs)} outputs. "
-        f"Repeated output groups detected: {len(repeated_groups)}.",
+        f"Summary: {len(inputs)} inputs → 1 transaction → {len(outputs)} outputs.",
         ha="center",
         va="center",
         fontsize=11,
