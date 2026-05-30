@@ -1,7 +1,7 @@
 """
-Peel-chain tracing case study
+peel chain tracing case study
 
-This Streamlit app follows a peel-chain path using transaction outputs (UTXOs),
+This Streamlit app follows a peel chain path using transaction outputs (UTXOs),
 not address-level output summaries.
 
 Case logic:
@@ -12,7 +12,7 @@ Case logic:
 5. In the spending transaction, select the dominant continuing output.
 6. Repeat this transaction-by-transaction.
 
-This keeps the case aligned with peel-chain tracing: a large output is spent,
+This keeps the case aligned with peel chain tracing: a large output is spent,
 a smaller amount is separated, and the remaining value continues forward.
 """
 
@@ -30,7 +30,7 @@ import streamlit as st
 # -----------------------------
 # Fixed case settings
 # -----------------------------
-# CASE_NAME = "Conti Ransomware Peel-Chain Case Study"
+# CASE_NAME = "Conti Ransomware peel Chain Case Study"
 # SEED_ADDRESS = "13XELohdTXGbgHpwRrNHMiuKrjA7a9wM2z"
 # REQUEST_TIMEOUT_SECONDS = 20
 # SATOSHIS_PER_BTC = 100_000_000
@@ -41,7 +41,7 @@ import streamlit as st
 # BLOCKSTREAM_ADDRESS_URL = f"https://blockstream.info/address/{SEED_ADDRESS}"
 
 
-CASE_NAME = "Conti Ransomware Peel-Chain Case Study"
+CASE_NAME = "Conti Ransomware peel Chain Case Study"
 SEED_ADDRESS = "13XELohdTXGbgHpwRrNHMiuKrjA7a9wM2z"
 
 REQUEST_TIMEOUT_SECONDS = 20
@@ -243,11 +243,11 @@ def find_starting_utxo(seed_address: str) -> Dict[str, Any]:
 
 
 def choose_continuing_output(spending_tx: Dict[str, Any], previous_value_sats: int) -> Optional[Dict[str, Any]]:
-    """Choose the output that continues the main peel-chain flow.
+    """Choose the output that continues the main peel chain flow.
 
     For a case-study prototype, the continuing output is the largest output that
     is smaller than or equal to the value being spent. This mirrors the visible
-    peel-chain pattern: the main balance continues, while the difference is
+    peel chain pattern: the main balance continues, while the difference is
     separated into other outputs and fees.
     """
     outputs = []
@@ -332,7 +332,7 @@ def collect_starting_utxo_candidates(seed_address: str, candidate_limit: int = C
 
 
 def trace_from_starting_utxo(starting_utxo: Dict[str, Any], max_hops: int) -> Tuple[pd.DataFrame, pd.DataFrame, List[str]]:
-    """Trace a peel-chain path from one concrete starting UTXO."""
+    """Trace a peel chain path from one concrete starting UTXO."""
     logs: List[str] = []
     rows: List[Dict[str, Any]] = []
     separated_rows: List[Dict[str, Any]] = []
@@ -500,7 +500,7 @@ def trace_peel_chain_utxos(seed_address: str, max_hops: int) -> Tuple[pd.DataFra
 
     if best_result is None:
         st.warning(
-            "Live trace did not return a usable peel-chain path this time. "
+            "Live trace did not return a usable peel chain path this time. "
             "This can happen if the API times out, rate limits are hit, or the selected outputs do not produce the expected path. "
             "Please try refreshing."
         )
@@ -537,7 +537,7 @@ def build_summary_rows(peel_df: pd.DataFrame) -> pd.DataFrame:
         },
         {
             "Point": "Final displayed balance",
-            "Finding": "This is where the visible peel-chain path ends.",
+            "Finding": "This is where the visible peel chain path ends.",
             "BTC": btc(float(last["Next Continuing BTC"])) if pd.notna(last.get("Next Continuing BTC")) else btc(float(last["Continuing BTC"])),
         },
     ]
@@ -545,7 +545,7 @@ def build_summary_rows(peel_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
-    """Draw a clean peel-chain graph with minimal labels."""
+    """Draw a clean peel chain graph with minimal labels."""
     graph_df = peel_df.copy()
     G = nx.DiGraph()
     pos = {}
@@ -652,7 +652,7 @@ def get_consolidation_details(peel_df: pd.DataFrame) -> Optional[Dict[str, Any]]
                 "Input Index": i,
                 "Input Address": prevout.get("scriptpubkey_address"),
                 "Input BTC": value_btc,
-                "Role": "Traced peel-chain output" if abs(value_btc - traced_btc) < 0.0001 else "Other consolidation input",
+                "Role": "Traced peel chain output" if abs(value_btc - traced_btc) < 0.0001 else "Other consolidation input",
             }
         )
 
@@ -682,7 +682,7 @@ def get_consolidation_details(peel_df: pd.DataFrame) -> Optional[Dict[str, Any]]
     }
 
 def draw_consolidation_graph(final_spending_txid: str, traced_input_value: float) -> plt.Figure:
-    """Draw the consolidation transaction where the final traced peel-chain output is merged."""
+    """Draw the consolidation transaction where the final traced peel chain output is merged."""
     tx = get_transaction(final_spending_txid)
 
     G = nx.DiGraph()
@@ -780,7 +780,7 @@ def draw_consolidation_graph(final_spending_txid: str, traced_input_value: float
     )
 
     legend_handles = [
-        mpatches.Patch(color="#f97316", label="Final traced peel-chain output (20 BTC)"),
+        mpatches.Patch(color="#f97316", label="Final traced peel chain output (20 BTC)"),
         mpatches.Patch(color="#93c5fd", label="Other consolidation inputs"),
         mpatches.Patch(color="#9ca3af", label="Consolidation transaction"),
         mpatches.Patch(color="#22c55e", label="Consolidated output"),
@@ -789,7 +789,7 @@ def draw_consolidation_graph(final_spending_txid: str, traced_input_value: float
     ax.legend(handles=legend_handles, loc="upper right")
 
     ax.set_title(
-        "Consolidation phase: final peel-chain output merges into a larger transaction",
+        "Consolidation phase: final peel chain output merges into a larger transaction",
         pad=18,
         fontsize=13,
     )
@@ -864,7 +864,7 @@ max_hops = DEFAULT_MAX_HOPS
 graph_steps = DEFAULT_GRAPH_STEPS
 
 try:
-    with st.spinner("Fetching blockchain data and following the peel-chain path..."):
+    with st.spinner("Fetching blockchain data and following the peel chain path..."):
         peel_df, separated_df, trace_logs = trace_peel_chain_utxos(
             seed_address=SEED_ADDRESS,
             max_hops=max_hops,
@@ -934,7 +934,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.subheader("1. Peel-chain phase")
+st.subheader("1. peel chain phase")
 st.write(
     "This graph follows the continuing balance as it moves from one spent output to the next. "
     "The pink nodes show the value peeled away from the main flow at each step."

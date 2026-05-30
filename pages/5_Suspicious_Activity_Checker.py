@@ -141,7 +141,7 @@ def repeated_equal_outputs(outputs, min_repeats=3):
 
 
 def is_peel_like(outputs):
-    """Return True when outputs have a simple peel-chain-like shape.
+    """Return True when outputs have a simple peel chain-like shape.
 
     A peel chain does not always have exactly two outputs. This relaxed rule looks
     for one dominant continuing output plus one or more smaller outputs. It is a
@@ -262,7 +262,7 @@ def analyse_peel_chain(txs, address):
 
     if peel_like_count:
         reasons.append(
-            f"{peel_like_count} outgoing transaction(s) had a peel-chain-like shape: most value continued forward while a smaller amount was separated."
+            f"{peel_like_count} outgoing transaction(s) had a peel chain-like shape: most value continued forward while a smaller amount was separated."
         )
 
     if peel_like_count >= 2:
@@ -270,7 +270,7 @@ def analyse_peel_chain(txs, address):
         reasons.append("More than one transaction shows a similar pattern, which makes the clue more interesting.")
 
     if not reasons:
-        reasons.append("Nothing in the loaded transactions strongly suggests peel-chain behaviour.")
+        reasons.append("Nothing in the loaded transactions strongly suggests peel chain behaviour.")
 
     return score, reasons
 
@@ -373,7 +373,7 @@ st.caption('A quick "does this pass the vibe check?" screen for Bitcoin addresse
 
 st.write(
     "Enter a Bitcoin address and this page will look for basic blockchain clues linked to the case studies: "
-    "clustering, peel-chain-style movement and mixer-like activity."
+    "clustering, peel chain-style movement and mixer-like activity."
 )
 
 st.warning(
@@ -386,7 +386,7 @@ with st.expander("What is this checker looking for?"):
         """
         **Clustering clues** look for addresses being spent together in the same transaction. This can suggest that the same person, wallet or group may control them.
 
-        **Peel-chain clues** look for the classic pattern where most of the Bitcoin keeps moving forward while smaller amounts are repeatedly separated.
+        **peel chain clues** look for the classic pattern where most of the Bitcoin keeps moving forward while smaller amounts are repeatedly separated.
 
         **Mixer-like clues** look for transactions with lots of inputs, lots of outputs or repeated equal-value outputs. These patterns can make it harder to connect a sender to a receiver.
 
@@ -397,7 +397,7 @@ with st.expander("What is this checker looking for?"):
 sample_addresses = {
     "Choose a sample or enter your own": "",
     "Locky ransomware sample": "178HGmCfR26dSSiFxJQah1U588p2CjgX7f",
-    "Conti peel-chain sample": "13XELohdTXGbgHpwRrNHMiuKrjA7a9wM2z",
+    "Conti peel chain sample": "13XELohdTXGbgHpwRrNHMiuKrjA7a9wM2z",
     "ChipMixer sample": "bc1qs604c7jv6amk4cxqlnvuxv26hv3e48cds4m0ew",
     "Custom": "",
 }
@@ -463,7 +463,7 @@ if st.button("Run the vibe check"):
             <h3>Quick read</h3>
             <p><strong>Transactions checked:</strong> {len(txs)}</p>
             <p><strong>Clustering clues:</strong> {clustering_level} <span class="small-note">(score {clustering_score})</span></p>
-            <p><strong>Peel-chain clues:</strong> {peel_level} <span class="small-note">(score {peel_score})</span></p>
+            <p><strong>peel chain clues:</strong> {peel_level} <span class="small-note">(score {peel_score})</span></p>
             <p><strong>Mixer-like clues:</strong> {mixer_level} <span class="small-note">(score {mixer_score})</span></p>
             <p class="small-note">
                 Low, Medium and High are based on simple clue counts from the loaded transactions. They are useful for deciding where to look next, not for making final claims.
@@ -501,7 +501,7 @@ if st.button("Run the vibe check"):
         for reason in clustering_reasons:
             st.write(f"- {reason}")
 
-    with st.expander("Peel-chain clues", expanded=True):
+    with st.expander("peel chain clues", expanded=True):
         for reason in peel_reasons:
             st.write(f"- {reason}")
 
