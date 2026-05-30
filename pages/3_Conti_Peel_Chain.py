@@ -81,20 +81,6 @@ st.markdown(
         margin-bottom: 1rem;
     }
     .small-note {font-size: 0.92rem; color: #666;}
-    .btc-coin {
-        width: 76px;
-        height: 76px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 42px;
-        font-weight: 800;
-        color: white;
-        background: radial-gradient(circle at 30% 30%, #ffd166, #f7931a 65%, #b45309);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.18);
-        margin-bottom: 0.5rem;
-    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -112,8 +98,13 @@ def sats_to_btc(value: Optional[int]) -> float:
 
 
 def btc(value: float) -> str:
-    """Format BTC values consistently."""
+    """Format BTC values consistently for detailed tables."""
     return f"{value:.8f} BTC"
+
+
+def btc_short(value: float, decimals: int = 1) -> str:
+    """Format BTC values for user-facing summary text."""
+    return f"{value:,.{decimals}f} BTC"
 
 
 def short_txid(txid: str) -> str:
@@ -532,22 +523,22 @@ def build_summary_rows(peel_df: pd.DataFrame) -> pd.DataFrame:
     rows = [
         {
             "Point": "Starting flow",
-            "Finding": "The traced path begins from a high-value transaction output.",
+            "Finding": "The money trail begins with a high-value output.",
             "BTC": btc(float(first["Continuing BTC"])),
         },
         {
             "Point": "Displayed hops",
-            "Finding": "The app follows the continuing output transaction-by-transaction.",
+            "Finding": "The app follows the continuing balance step by step.",
             "BTC": str(len(valid)),
         },
         {
             "Point": "Total value separated",
-            "Finding": "This is the total difference between the continuing balance at each displayed hop.",
+            "Finding": "This is the total value separated from the main flow.",
             "BTC": btc(float(valid["Value Peeled Off"].sum())) if not valid.empty else "0 BTC",
         },
         {
             "Point": "Final displayed balance",
-            "Finding": "This is the continuing balance at the end of the displayed path.",
+            "Finding": "This is where the visible peel-chain path ends.",
             "BTC": btc(float(last["Next Continuing BTC"])) if pd.notna(last.get("Next Continuing BTC")) else btc(float(last["Continuing BTC"])),
         },
     ]
@@ -815,26 +806,30 @@ def draw_consolidation_graph(final_spending_txid: str, traced_input_value: float
 # -----------------------------
 # App UI
 # -----------------------------
-st.markdown('<div class="btc-coin">₿</div>', unsafe_allow_html=True)
-st.title(CASE_NAME)
-st.caption("A Bitcoin tracing case study showing a peel-chain phase followed by consolidation.")
+st.title("₿ Conti ransomware: peel chain")
+st.caption("Follow a suspected peel chain and see how the money trail starts to ghost itself.")
 
 st.markdown(
     f"""
     <div class="case-card">
         <h3>Case focus</h3>
         <p>
-           Peel-chain laundering is a way criminals try to hide ownership of cryptocurrency funds. 
-           Rather than moving one large balance directly, smaller amounts are split off over multiple transactions to make the linked addresses look unrelated.      
-        </p>        
-        <p>  
-            This case study starts from the seed address <code>{SEED_ADDRESS}</code> and follows a high-value
-            transaction output forward through the blockchain. The trace follows the continuing balance from one
-            spent output to the next, then calculates the value separated from that continuing flow at each hop.
+            Conti was one of the most prolific ransomware groups active during 2020 and 2021.
+            This case study starts with a Bitcoin address linked to Conti and follows a high-value
+            output as it moves through the blockchain.
         </p>
         <p>
-            This case shows a clear peel-chain pattern, where most of the value continues forward while smaller amounts are peeled away across successive transactions. 
-            The traced path later ends when the remaining 20 BTC is merged into a much larger consolidation transaction, showing how laundering behaviour can shift from fragmentation to aggregation.
+            The pattern shown here is a peel chain. Instead of moving one large balance directly,
+            the main balance keeps moving forward while smaller amounts are peeled away at each step.
+            This can make the money trail harder to follow and harder to explain.
+        </p>
+        <p>
+            The goal is not to prove who controlled every later address. The goal is to watch the
+            pattern unfold, clock the repeated behaviour and understand why peel chains are useful
+            in blockchain tracing.
+        </p>
+        <p class="small-note">
+            Seed address used for this case: <code>{SEED_ADDRESS}</code>
         </p>
     </div>
     """,
@@ -842,20 +837,21 @@ st.markdown(
 )
 
 st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
-st.header("How the trace works")
+st.header("Following the peel chain")
 
 st.markdown(
     """
     <div class="case-card">
-        <h3>Transaction-by-transaction tracing</h3>
+        <h3>How this trace works</h3>
         <p>
-            The app does not group all outputs by address. It follows a specific transaction output, checks whether
-            that output was spent and then moves into the transaction that spent it. The largest continuing output
-            in that transaction becomes the next step in the chain.
+            This page follows one specific Bitcoin output, also known as a UTXO. The app checks
+            whether that output was spent, opens the transaction that spent it and then follows
+            the largest continuing output into the next step.
         </p>
         <p>
-            The peeled-off value is calculated as the difference between the balance entering the hop and the
-            continuing balance leaving the hop.
+            The peeled amount is the difference between the balance entering a step and the
+            continuing balance leaving that step. In plain English: what moved on, and what got
+            peeled away?
         </p>
     </div>
     """,
@@ -892,32 +888,46 @@ elif not peel_df.empty:
 
 consolidation = get_consolidation_details(peel_df)
 
-col1, col2, col3, col4, col5 = st.columns(5)
-col1.metric("Starting flow", f"{start_btc:.4f} BTC")
-col2.metric("Displayed hops", len(valid_steps))
-col3.metric("Total peeled off", f"{total_peeled:.4f} BTC")
-col4.metric("Largest peel", f"{largest_peel:.4f} BTC")
-col5.metric("Final displayed flow", f"{final_btc:.4f} BTC")
+st.info(
+    f"""
+**What should you clock?**
+
+• The traced flow starts at approximately **{btc_short(start_btc, 1)}**
+
+• The app follows **{len(valid_steps)} hops** through the blockchain
+
+• Approximately **{btc_short(total_peeled, 1)}** is peeled away from the main flow
+
+• The continuing balance falls to approximately **{btc_short(final_btc, 1)}** before the trace changes shape
+"""
+)
 
 if consolidation is not None:
-    col6, col7, col8 = st.columns(3)
-    col6.metric("Consolidation inputs", consolidation["input_count"])
-    col7.metric("Consolidated output", f"{consolidation['total_output_btc']:.4f} BTC")
-    col8.metric("Consolidation fee", f"{consolidation['fee_btc']:.6f} BTC")
+    st.info(
+        f"""
+**What happens after the peel chain?**
+
+• The final traced output is later combined with other inputs
+
+• The consolidation transaction has **{consolidation['input_count']} inputs** and **{consolidation['output_count']} output**
+
+• Approximately **{btc_short(consolidation['total_output_btc'], 1)}** leaves as the consolidated output
+
+• This is where the pattern shifts from peeling funds apart to combining funds together
+"""
+    )
 
 st.markdown(
     f"""
     <div class="case-card">
-        <h3>What the trace shows</h3>
+        <h3>Why this does not pass the vibe check</h3>
         <p>
-            The main flow begins at approximately <strong>{start_btc:.4f} BTC</strong> and is followed through
-            successive spent outputs. Across the displayed path, <strong>{total_peeled:.4f} BTC</strong> is separated
-            from the continuing flow.
+            The main balance moves forward again and again, while smaller amounts are separated along the way.
+            That repeated pattern is what makes this look like a peel chain.
         </p>
         <p>
-            The important feature is the repeated forward movement: each hop spends the current output, creates a
-            new continuing output and separates value away from the main path. The traced path then ends when the
-            remaining 20 BTC output is swept into a larger consolidation transaction.
+            The important clue is not one single transaction. It is the behaviour across the path: spend the current
+            output, create a new continuing output, peel value away and repeat.
         </p>
     </div>
     """,
@@ -926,12 +936,15 @@ st.markdown(
 
 st.subheader("1. Peel-chain phase")
 st.write(
-    "The graph follows the continuing balance across successive spent outputs. "
-    "The pink nodes show value separated from the main flow at each hop."
+    "This graph follows the continuing balance as it moves from one spent output to the next. "
+    "The pink nodes show the value peeled away from the main flow at each step."
 )
 st.pyplot(draw_peel_graph(peel_df, graph_steps=graph_steps), use_container_width=True)
 
-st.subheader("2. Peel-chain evidence table")
+st.subheader("2. Evidence table: step by step")
+st.write(
+    "This table shows the trace in more detail. Use it if you want to see the transaction IDs, continuing balances and peeled values behind the graph."
+)
 display_cols = [
     "Step",
     "Date Created",
@@ -958,10 +971,9 @@ if consolidation is None:
     st.write("No consolidation transaction was identified at the end of the displayed path.")
 else:
     st.write(
-        f"After the peel-chain sequence, the final traced output of {consolidation['traced_btc']:.4f} BTC "
-        f"is spent with other inputs in a consolidation transaction. The transaction combines "
-        f"{consolidation['input_count']} inputs into {consolidation['output_count']} output, "
-        f"with approximately {consolidation['total_output_btc']:.4f} BTC leaving as the consolidated output."
+        f"The trail does not end with the peel chain. The final traced output of approximately "
+        f"{btc_short(consolidation['traced_btc'], 1)} is later swept into a much larger consolidation transaction. "
+        f"At this point, the Bitcoin is still visible on the blockchain, but the story becomes less clear."
     )
 
     final_spending_txid = peel_df.iloc[-1]["Spending Transaction"]
@@ -986,6 +998,9 @@ else:
 
 
 st.subheader("4. Transaction summary")
+st.write(
+    "This summary pulls out the key points from the trace without needing to read every transaction row."
+)
 st.dataframe(build_summary_rows(peel_df), use_container_width=True, hide_index=True)
 
 
@@ -994,8 +1009,9 @@ st.markdown(
     """
     <div class="case-card">
         <p>
-            Blockchain tracing shows transaction movement. The labels in this case describe transaction structure:
-            starting flow, continuing flow and value peeled off. They do not identify a real-world person.
+            Blockchain tracing can show where Bitcoin moved, but it does not automatically reveal who controlled
+            every later address. In this case, the labels describe transaction structure: starting flow, continuing
+            flow, peeled value and consolidation. They are clues for investigation, not proof of identity.
         </p>
     </div>
     """,
