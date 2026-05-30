@@ -496,15 +496,15 @@ follow_numbers = calculate_case_numbers(df_follow_inputs, df_follow_outputs)
 
 st.info(
     f"""
-**What happened?**
+**What should you clock**
 
-• 30 Locky-associated addresses were spent together
+• Many addresses spent together
 
-• The addresses combined approximately **{numbers['total_input_btc']:.2f} BTC**
+• One dominant output
 
-• Almost all funds were sent to a single output (**{numbers['main_output_btc']:.2f} BTC**)
+• Very small change output
 
-• This transaction provides a strong clustering signal under the Common Input Ownership Heuristic
+• Strong clustering signal
 """
 )
 
@@ -558,13 +558,7 @@ st.info(
     f"""
 **What happened next?**
 
-• The 80 BTC output later appeared alongside **{df_follow_inputs['Input Address'].nunique()} inputs**
-
-• Approximately **{df_follow_inputs['Input BTC'].sum():.0f} BTC** was combined
-
-• The largest output was **{df_follow_outputs['Output BTC'].max():.0f} BTC**
-
-• The money trail remains visible, but ownership becomes less certain
+The trail does not end here. The 80 BTC output later appeared in a much larger transaction involving several additional inputs.
 """
 )
 
