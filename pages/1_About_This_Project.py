@@ -1,9 +1,16 @@
 import streamlit as st
 
-st.title("About This Project")
+st.title("₿ About Blockchain Hide and Seek")
 
-st.write("Bitcoin transactions are public, but that does not mean they are easy to understand.")
-st.write("This student cyber security project uses blockchain data, visualisations and real-world case studies to make Bitcoin tracing concepts easier to explore.")
+st.write(
+    "Bitcoin transactions are public, but that does not mean they are easy to understand. "
+    "This project was created to help beginners learn how to follow the money on the blockchain using real-world case studies, visualisations and hands-on investigation."
+)
+
+st.write(
+    "Blockchain tracing is often described as a game of hide and seek. "
+    "Users try to hide their activity, while investigators try to uncover patterns and follow the trail."
+)
 
 st.warning(
     "This app can highlight suspicious-looking transaction patterns, but it cannot confirm who owns a Bitcoin address or whether a crime has occurred."
@@ -12,21 +19,19 @@ st.warning(
 st.header("What this project does")
 
 st.markdown("""
-This application was built to make Bitcoin tracing concepts easier to explore and explain.
+The goal of this project is simple: help users feel confident enough to start following the money themselves:
 
-It can help users:
-
-- inspect Bitcoin addresses and transaction activity
-- visualise how funds move between addresses and transactions
-- explore real-world cybercrime case studies
-- understand suspicious movement patterns such as batching, clustering and peel chains
-- investigate transactions in a more structured and beginner-friendly way
+- investigate Bitcoin addresses and transactions
+- visualise how money moves through the blockchain
+- learn foundational tracing techniques such as clustering and peel chains
+- explore real-world ransomware, mixer and hack case studies
+- identify transactions that do not pass the vibe check
 """)
 
 st.header("How the application works")
 
 st.write(
-    "This application uses publicly available Bitcoin blockchain data to explore how cryptocurrency transactions can be traced and interpreted."
+    "The application retrieves live Bitcoin transaction data from the blockchain and presents it in a way that is easier to explore and understand."
 )
 
 st.markdown("""
@@ -34,85 +39,92 @@ st.markdown("""
 - **Blockstream API** is used to retrieve live Bitcoin address and transaction data.
 
 **Tools used**
-- **Python** for data collection and processing
-- **pandas** for transaction tables and summaries
-- **NetworkX** for transaction graph modelling
-- **Matplotlib** for visualisations
-- **Streamlit** for the interactive application interface
+- Blockstream API to retrieve live Bitcoin transaction data
+- Python to build the application logic
+- pandas for transaction tables and summaries
+- NetworkX for graph-based visualisations
+- Matplotlib for charts and diagrams
+- Streamlit to publish the application online
 
 **Tracing methods used**
-This application uses practical blockchain tracing techniques, including:
+Blockchain tracing is a bit like a game of hide and seek. This application introduces some of the techniques investigators use to uncover patterns and follow the money, including:
 
-- address-level transaction analysis
-- transaction-level investigation
-- graph-based visualisation of fund movement
-- case-study-based tracing examples
-- heuristic observation of patterns such as batching, clustering and peel-chain behaviour
+- tracking Bitcoin as it moves between addresses
+- visualising transaction flows using graphs
+- identifying possible address clusters
+- spotting peel chains, batching behaviour and other transaction patterns
+- exploring real-world ransomware, mixer and hack case studies
+- learning which transactions pass the vibe check and which ones deserve a closer look
 """)
 
 st.header("How to use the application")
 
 st.markdown("""
-**1. Start with a Bitcoin address**
+**1. Pick a trail to follow**
 
-Enter your own Bitcoin address, or use one of the sample addresses provided.
+Enter a Bitcoin address or choose one of the sample case studies.
 
-**2. Review the summary**
+**2. Start asking questions**
 
-Check the address statistics, including received Bitcoin, spent Bitcoin, balance and transaction count.
+Who is sending Bitcoin to this address? Where is the money going? Is there anything unusual about the activity?
 
-**3. Investigate transactions**
+**3. Follow the money**
 
-Use the transaction tables to identify interesting transaction IDs.
+Use the transaction tables to trace the movement of funds through the blockchain.
 
-**4. Inspect individual transactions**
+**4. Dig deeper**
 
-Copy a transaction ID into the Transaction ID Explorer to view the full transaction breakdown.
+Open individual transactions to see exactly which addresses were involved.
 
-**5. Explore the case studies**
+**5. Clock suspicious behaviour**
 
-Open the case study pages from the sidebar to see tracing techniques applied to real-world examples.
+Look for patterns that do not pass the vibe check, such as clustering, peel chains or mixing activity.
+
+**6. Put your skills to the test**
+
+Explore the case studies and see if you can follow the money yourself.
 """)
 
 
 st.header("Case studies included")
 
 st.write(
-    "The case studies are arranged to show how blockchain tracing becomes increasingly difficult as more advanced evasion techniques are introduced. "
-    "The clustering case study shows how related Bitcoin addresses can sometimes be linked through transaction analysis. "
-    "The later peel-chain and mixer case studies explore techniques designed to make suspicious fund movement harder to follow."
+    "The case studies are arranged to show how the game of blockchain hide and seek evolves over time. "
+    "The first case study focuses on clustering and demonstrates how investigators can use transaction patterns to link related addresses together. "
+    "The later case studies explore peel chains and mixers, which are designed to make following the money much more difficult."
 )
-
 col1, col2, col3 = st.columns(3)
 
 with col1:
     st.subheader("Locky ransomware")
     st.write(
-        "Explores transaction behaviour linked to a ransomware ecosystem and shows how blockchain analysis can help investigate suspicious wallet activity."
+        "Learn how clustering techniques can help investigators identify groups of addresses that may belong to the same entity."
+
     )
 
 with col2:
     st.subheader("Conti peel chain")
     st.write(
-        "Explores a peel-chain style movement pattern, where funds move through a sequence of transactions while smaller amounts are separated along the way."
+        "Follow a suspected peel chain and see how criminals attempt to ghost their funds by repeatedly moving Bitcoin between addresses."
     )
 
 with col3:
-    st.subheader("ChipMixer / CoinJoin")
+    st.subheader("ChipMixer")
     st.write(
-        "Explores batching, denomination splitting and transaction behaviours that may be associated with mixing-style activity."
+        "Explore transaction structures associated with mixing activity and learn why mixers make blockchain tracing more difficult."
     )
 
 st.header("Important limitations")
 
 st.markdown("""
-Blockchain tracing has important limits.
+Blockchain tracing is a powerful tool, but it is not a crystal ball.
 
 - **Addresses are not people.** A Bitcoin address does not directly identify a person, company or criminal group.
-- **Patterns are clues, not proof.** Some transaction behaviours may look suspicious, but they do not automatically mean criminal activity is taking place.
-- **Some transactions combine funds from multiple addresses.** This can make it difficult to tell exactly how much came from one address.
-- **Live data can vary.** Results may change depending on API availability, transaction history limits and network timing.
-- **Not every unusual pattern is suspicious.** Legitimate cryptocurrency services can sometimes create transaction patterns that look similar to laundering activity.
+- **Patterns are clues, not proof.** The blockchain can point investigators in the right direction, but it rarely provides all the answers.
+- **Not every transaction passes the vibe check.** Some unusual-looking transactions have perfectly innocent explanations.
+- **Some users are better at hide and seek than others.** Techniques such as mixers, peel chains and privacy-focused cryptocurrencies can make tracing more difficult.
+- **Investigators use more than just the blockchain.** On-chain analysis is often combined with off-chain investigation techniques.
+- **Live data changes over time.** The blockchain never sleeps, so results can change as new transactions occur.
 """)
 
 st.header("Future improvements")
@@ -120,12 +132,12 @@ st.header("Future improvements")
 st.markdown("""
 Possible future improvements include:
 
-- suspicious activity checker for user-entered address
-- improved graph layouts for large transaction networks
-- exportable investigation reports
+- automatic "does this pass the vibe check?" scoring
+- suspicious activity summaries for user-entered addresses
 - additional ransomware and hack case studies
-- clearer guidance when analysing addresses with very little transaction activity
-- better handling when live blockchain data is temporarily unavailable
+- improved transaction network visualisations
+- exportable investigation reports
+- better support for large and complex transaction histories
             
 """)
 
