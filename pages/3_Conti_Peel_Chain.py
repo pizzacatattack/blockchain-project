@@ -30,7 +30,7 @@ import streamlit as st
 # -----------------------------
 # Fixed case settings
 # -----------------------------
-# CASE_NAME = "Conti Ransomware peel Chain Case Study"
+# CASE_NAME = "Conti Ransomware Peel Chain Case Study"
 # SEED_ADDRESS = "13XELohdTXGbgHpwRrNHMiuKrjA7a9wM2z"
 # REQUEST_TIMEOUT_SECONDS = 20
 # SATOSHIS_PER_BTC = 100_000_000
@@ -41,7 +41,7 @@ import streamlit as st
 # BLOCKSTREAM_ADDRESS_URL = f"https://blockstream.info/address/{SEED_ADDRESS}"
 
 
-CASE_NAME = "Conti Ransomware peel Chain Case Study"
+CASE_NAME = "Conti Ransomware Peel Chain Case Study"
 SEED_ADDRESS = "13XELohdTXGbgHpwRrNHMiuKrjA7a9wM2z"
 
 REQUEST_TIMEOUT_SECONDS = 20
@@ -934,7 +934,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.subheader("1. peel chain phase")
+st.subheader("1. Peel chain phase")
 st.write(
     "This graph follows the continuing balance as it moves from one spent output to the next. "
     "The pink nodes show the value peeled away from the main flow at each step."
