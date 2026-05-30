@@ -377,17 +377,17 @@ def draw_mixer_structure_graph(tx: Dict[str, Any]) -> plt.Figure:
     else:
         seed_text = "Seed address\nused to find TX"
 
-    add_box(ax, -4.4, 1.0, seed_text, "#f97316", width=1.95, height=0.70, fontsize=9.5)
+    add_box(ax, -4.4, 1.0, seed_text, "#F4C76B", width=1.95, height=0.70, fontsize=9.5)
 
     other_input_count = len(inputs) - len(seed_inputs)
     if other_input_count > 0:
         input_text = f"{len(inputs)} inputs\n{total_input_btc:.1f} BTC pooled"
     else:
         input_text = f"{len(inputs)} input\n{total_input_btc:.1f} BTC"
-    add_box(ax, -4.4, -0.35, input_text, "#93c5fd", width=2.15, height=0.82, fontsize=10)
+    add_box(ax, -4.4, -0.35, input_text, "#BFDDF2", width=2.15, height=0.82, fontsize=10)
 
     # Main transaction
-    add_box(ax, -0.5, 0.0, "Mixer-style\ntransaction", "#9ca3af", width=2.05, height=0.85, fontsize=10)
+    add_box(ax, -0.5, 0.0, "Mixer-style\ntransaction", "#D8D2F0", width=2.05, height=0.85, fontsize=10)
 
     # Output side
     output_positions = []
@@ -398,11 +398,11 @@ def draw_mixer_structure_graph(tx: Dict[str, Any]) -> plt.Figure:
         value = float(row["Rounded Output BTC"])
         count = int(row["Count"])
         total = float(row["Total BTC"])
-        output_positions.append((3.6, y, "#22c55e"))
+        output_positions.append((3.6, y, "#A9D8B1"))
         output_labels.append(f"{count} outputs\n{value:.1f} BTC each\n{total:.1f} BTC total")
 
     if grouped_other_count > 0:
-        output_positions.append((3.6, -1.85, "#86efac"))
+        output_positions.append((3.6, -1.85, "#D9F0DD"))
         output_labels.append(f"Other outputs\n{grouped_other_count} outputs\n{grouped_other_btc:.1f} BTC")
 
     for (x, y, colour), label in zip(output_positions, output_labels):
