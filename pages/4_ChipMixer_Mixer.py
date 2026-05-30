@@ -293,18 +293,15 @@ def build_transaction_summary(tx: Dict[str, Any]) -> pd.DataFrame:
 
 
 def draw_mixer_structure_graph(tx: Dict[str, Any]) -> plt.Figure:
-    """Draw a simplified mixer-style transaction graph for the report.
+    """Draw a simplified mixer-style transaction diagram for the report.
 
-    The old graph showed many individual inputs and outputs, which was useful
-    for the app but too crowded for a paper screenshot. This version groups the
-    less important nodes and highlights the main point: many inputs enter one
-    transaction, then repeated output amounts appear on the output side.
+    This version uses labelled boxes instead of many small circular nodes.
+    It is designed to be readable when pasted into a Word/PDF report.
     """
     inputs = get_input_rows(tx)
     outputs = get_output_rows(tx)
 
     total_input_btc = sum(row["Input BTC"] for row in inputs)
-    total_output_btc = sum(row["Output BTC"] for row in outputs)
 
     seed_inputs = [row for row in inputs if row.get("Seed Address Input")]
     seed_input_btc = sum(row["Input BTC"] for row in seed_inputs)
@@ -321,146 +318,134 @@ def draw_mixer_structure_graph(tx: Dict[str, Any]) -> plt.Figure:
     ]
     other_output_btc = sum(row["Output BTC"] for row in other_outputs)
 
-    G = nx.DiGraph()
-    tx_node = "Mixer-style\ntransaction"
-    G.add_node(tx_node)
-
-    pos = {tx_node: (0, 0)}
-    labels = {tx_node: "Mixer-style\ntransaction"}
-    colours = {tx_node: "#9ca3af"}
-    sizes = {tx_node: 2600}
-
-    # -----------------------------
-    # Input side: keep it simple
-    # -----------------------------
-    input_nodes = []
-
-    if seed_inputs:
-        node = "Seed input"
-        G.add_edge(node, tx_node)
-        input_nodes.append(node)
-        labels[node] = f"Seed input\n{seed_input_btc:.1f} BTC"
-        colours[node] = "#f97316"
-        sizes[node] = 2300
-
-    other_input_count = len(inputs) - len(seed_inputs)
-    other_input_btc = total_input_btc - seed_input_btc
-    if other_input_count > 0:
-        node = "Other inputs"
-        G.add_edge(node, tx_node)
-        input_nodes.append(node)
-        labels[node] = f"Other inputs\n{other_input_count} addresses\n{other_input_btc:.1f} BTC"
-        colours[node] = "#93c5fd"
-        sizes[node] = 2500
-
-    # If the seed was not one of the inputs, still show that this was the seed
-    # address used to find the transaction, but avoid implying it funded this TX.
-    if not seed_inputs:
-        node = "Seed address"
-        G.add_node(node)
-        input_nodes.insert(0, node)
-        labels[node] = "Seed address\nused to find TX"
-        colours[node] = "#f97316"
-        sizes[node] = 2200
-
-    for i, node in enumerate(input_nodes):
-        y = (len(input_nodes) - 1) / 2 - i
-        pos[node] = (-3.2, y * 1.4)
-
-    # -----------------------------
-    # Output side: repeated groups + other outputs
-    # -----------------------------
-    output_nodes = []
-
-    # Show only the strongest repeated groups so the figure stays readable.
-    for index, row in repeated_groups.head(4).iterrows():
-        value = float(row["Rounded Output BTC"])
-        count = int(row["Count"])
-        total = float(row["Total BTC"])
-        node = f"Repeated {value:.8f}"
-        G.add_edge(tx_node, node)
-        output_nodes.append(node)
-        labels[node] = f"{count} outputs\n{value:.1f} BTC each\n{total:.1f} BTC total"
-        colours[node] = "#22c55e"
-        sizes[node] = 2800
-
+    # Keep the four strongest repeated groups visible and group the rest.
+    visible_repeats = repeated_groups.head(4)
     remaining_repeated = repeated_groups.iloc[4:]
     remaining_repeated_count = int(remaining_repeated["Count"].sum()) if not remaining_repeated.empty else 0
     remaining_repeated_btc = float(remaining_repeated["Total BTC"].sum()) if not remaining_repeated.empty else 0.0
 
     grouped_other_count = len(other_outputs) + remaining_repeated_count
     grouped_other_btc = other_output_btc + remaining_repeated_btc
+
+    # -----------------------------
+    # Drawing helpers
+    # -----------------------------
+    def add_box(ax, x, y, text, facecolor, width=2.05, height=0.72, fontsize=10):
+        box = mpatches.FancyBboxPatch(
+            (x - width / 2, y - height / 2),
+            width,
+            height,
+            boxstyle="round,pad=0.04,rounding_size=0.08",
+            linewidth=1.4,
+            edgecolor="#374151",
+            facecolor=facecolor,
+        )
+        ax.add_patch(box)
+        ax.text(
+            x,
+            y,
+            text,
+            ha="center",
+            va="center",
+            fontsize=fontsize,
+            fontweight="bold",
+            color="#111827",
+            linespacing=1.15,
+        )
+        return box
+
+    def add_arrow(ax, x1, y1, x2, y2):
+        ax.annotate(
+            "",
+            xy=(x2, y2),
+            xytext=(x1, y1),
+            arrowprops=dict(
+                arrowstyle="-|>",
+                color="#6b7280",
+                linewidth=1.8,
+                shrinkA=12,
+                shrinkB=12,
+                mutation_scale=18,
+            ),
+        )
+
+    fig, ax = plt.subplots(figsize=(13, 7.2))
+
+    # Input side
+    if seed_inputs:
+        seed_text = f"Seed input\n{seed_input_btc:.1f} BTC"
+    else:
+        seed_text = "Seed address\nused to find TX"
+
+    add_box(ax, -4.4, 1.0, seed_text, "#f97316", width=1.95, height=0.70, fontsize=9.5)
+
+    other_input_count = len(inputs) - len(seed_inputs)
+    if other_input_count > 0:
+        input_text = f"{len(inputs)} inputs\n{total_input_btc:.1f} BTC pooled"
+    else:
+        input_text = f"{len(inputs)} input\n{total_input_btc:.1f} BTC"
+    add_box(ax, -4.4, -0.35, input_text, "#93c5fd", width=2.15, height=0.82, fontsize=10)
+
+    # Main transaction
+    add_box(ax, -0.5, 0.0, "Mixer-style\ntransaction", "#9ca3af", width=2.05, height=0.85, fontsize=10)
+
+    # Output side
+    output_positions = []
+    output_labels = []
+
+    y_values = [1.85, 0.95, 0.05, -0.85]
+    for y, (_, row) in zip(y_values, visible_repeats.iterrows()):
+        value = float(row["Rounded Output BTC"])
+        count = int(row["Count"])
+        total = float(row["Total BTC"])
+        output_positions.append((3.6, y, "#22c55e"))
+        output_labels.append(f"{count} outputs\n{value:.1f} BTC each\n{total:.1f} BTC total")
+
     if grouped_other_count > 0:
-        node = "Other outputs"
-        G.add_edge(tx_node, node)
-        output_nodes.append(node)
-        labels[node] = f"Other outputs\n{grouped_other_count} outputs\n{grouped_other_btc:.1f} BTC"
-        colours[node] = "#86efac"
-        sizes[node] = 2500
+        output_positions.append((3.6, -1.85, "#86efac"))
+        output_labels.append(f"Other outputs\n{grouped_other_count} outputs\n{grouped_other_btc:.1f} BTC")
 
-    for i, node in enumerate(output_nodes):
-        y = (len(output_nodes) - 1) / 2 - i
-        pos[node] = (3.2, y * 1.15)
+    for (x, y, colour), label in zip(output_positions, output_labels):
+        add_box(ax, x, y, label, colour, width=2.25, height=0.78, fontsize=9.5)
 
-    node_colours = [colours[node] for node in G.nodes()]
-    node_sizes = [sizes[node] for node in G.nodes()]
+    # Arrows
+    if seed_inputs:
+        add_arrow(ax, -3.35, 1.0, -1.55, 0.12)
+    # If the seed address only helped locate the transaction, do not draw an arrow from it.
+    add_arrow(ax, -3.35, -0.35, -1.55, -0.05)
+    for x, y, _ in output_positions:
+        add_arrow(ax, 0.55, 0.0, x - 1.15, y)
 
-    fig_height = max(5.5, 1.0 + max(len(input_nodes), len(output_nodes)) * 1.0)
-    fig, ax = plt.subplots(figsize=(12, fig_height))
-
-    nx.draw(
-        G,
-        pos,
-        ax=ax,
-        with_labels=False,
-        node_color=node_colours,
-        node_size=node_sizes,
-        edge_color="#6b7280",
-        arrows=True,
-        arrowstyle="-|>",
-        arrowsize=18,
-        width=1.6,
-        alpha=0.96,
-    )
-
-    nx.draw_networkx_labels(
-        G,
-        pos,
-        labels=labels,
-        font_size=9,
-        font_weight="bold",
-        ax=ax,
-    )
-
-    legend_handles = [
-        mpatches.Patch(color="#f97316", label="Seed address"),
-        mpatches.Patch(color="#93c5fd", label="Grouped inputs"),
-        mpatches.Patch(color="#9ca3af", label="Mixer-style transaction"),
-        mpatches.Patch(color="#22c55e", label="Repeated output amount"),
-        mpatches.Patch(color="#86efac", label="Other outputs"),
-    ]
-
-    ax.legend(handles=legend_handles, loc="upper right", fontsize=9)
+    # Title and summary
     ax.set_title(
-        "Mixer-style transaction structure: inputs are pooled and outputs are redistributed",
+        "Mixer-style transaction: pooled inputs and repeated output amounts",
+        fontsize=15,
         pad=18,
-        fontsize=13,
     )
 
-    # Small note below the graph. This makes the screenshot clearer in the paper.
     ax.text(
-        0,
+        -0.5,
         -2.8,
         f"Summary: {len(inputs)} inputs → 1 transaction → {len(outputs)} outputs. "
         f"Repeated output groups detected: {len(repeated_groups)}.",
         ha="center",
         va="center",
-        fontsize=10,
+        fontsize=11,
         color="#374151",
     )
 
-    ax.set_xlim(-4.4, 4.4)
-    ax.set_ylim(-3.2, 3.2)
+    ax.text(
+        -4.4,
+        -1.35,
+        "The seed address was used to locate this case-study transaction.",
+        ha="center",
+        va="center",
+        fontsize=8.8,
+        color="#4b5563",
+    )
+
+    ax.set_xlim(-5.8, 5.3)
+    ax.set_ylim(-3.2, 2.5)
     ax.axis("off")
     fig.tight_layout()
     return fig
