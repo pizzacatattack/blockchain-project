@@ -21,7 +21,7 @@ import streamlit as st
 # -----------------------------
 # Fixed case settings
 # -----------------------------
-CASE_NAME = "Locky Ransomware Clustering Case Study"
+CASE_NAME = "Locky ransomware: clustering"
 SEED_ADDRESS = "178HGmCfR26dSSiFxJQah1U588p2CjgX7f"
 CIOH_TXID = "275937c2c30fbdf778390cb33a1ca1236c824c26a0a89af34e540c18d692d648"
 FOLLOW_ON_TXID = "69affd84d73a7bbf644fe9defa18bab740b76487c07b636a6bb4a50689d8e8e3"
@@ -82,20 +82,6 @@ st.markdown(
         margin-bottom: 1rem;
     }
     .small-note {font-size: 0.92rem; color: #666;}
-    .btc-coin {
-        width: 76px;
-        height: 76px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 42px;
-        font-weight: 800;
-        color: white;
-        background: radial-gradient(circle at 30% 30%, #ffd166, #f7931a 65%, #b45309);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.18);
-        margin-bottom: 0.5rem;
-    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -439,10 +425,10 @@ def build_display_table(df, address_col, btc_col, role_func=None):
 # -----------------------------
 # App UI
 # -----------------------------
-st.title("Locky Ransomware Clustering Case Study")
+st.title("₿ Locky ransomware: clustering")
 
 st.caption(
-    "This case study shows how address clustering can be used as an early step in Bitcoin tracing."
+    "Follow the money from a known Locky address and see how clustering can help investigators clock related Bitcoin addresses."
 )
 
 st.markdown("<div style='height: 18px;'></div>", unsafe_allow_html=True)
@@ -452,18 +438,17 @@ st.markdown(
     <div class="case-card">
         <h3>Case focus</h3>
         <p>
-            This case study begins with a Bitcoin address linked to the Locky ransomware family from a published SANS case study.
-            Public blockchain data from Blockstream was then used to trace related transactions.
+            Locky was one of the biggest ransomware families of its time. Victims were instructed to pay a ransom in Bitcoin,
+            creating a trail that investigators could later examine on the blockchain.
         </p>
         <p>
-            The common-input ownership heuristic (CIOH) was used to look for addresses that may be controlled by the same entity.
-            The wider 30-address cluster was also cross-checked against the public Ransomwhere dataset, where those addresses were associated with Locky.
+            This case study begins with a Bitcoin address associated with Locky and follows the money through a larger
+            consolidation transaction. By looking at which addresses were used together, investigators can build a picture of
+            which wallets may have been controlled by the same operator group.
         </p>
         <p>
-            Later wallet activity shown in this case is simply following where the Bitcoin moved next, because ownership becomes less certain once funds leave the original cluster.
-        </p>
-        <p>
-            This makes clustering a useful starting point for blockchain tracing. As tracing techniques improved, more advanced evasion methods such as peel chains and mixers emerged to make suspicious fund movement harder to follow.
+            The goal is not to prove ownership. The goal is to identify transaction patterns that deserve a closer look.
+            This is where clustering becomes a useful starting point for blockchain hide and seek.
         </p>
     </div>
     """,
@@ -472,19 +457,20 @@ st.markdown(
 
 st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
 
-st.header("How the analysis works")
+st.header("Following the money")
 
 st.markdown(
     """
     <div class="case-card">
         <h3>Common-input ownership heuristic (CIOH)</h3>
         <p>
-            CIOH groups Bitcoin addresses that are used together as inputs in the same transaction.
-            The idea is that spending from each input address usually requires control of that address's private key.
+            The Common Input Ownership Heuristic is one of the classic blockchain tracing vibe checks.
+            If multiple Bitcoin addresses are used together as inputs in the same transaction, investigators may infer
+            that the same person, wallet or group controls them.
         </p>
         <p>
-            This makes CIOH useful for blockchain clustering, but it is not perfect proof of shared ownership.
-            Exchange wallets, collaborative transactions, shared services, and privacy tools can weaken this assumption.
+            The idea is simple: spending from an address normally requires access to its private key. Like all heuristics,
+            this is a clue rather than proof, but it can be a strong place to start when trying to clock related addresses.
         </p>
     </div>
     """,
@@ -518,20 +504,23 @@ col5.metric("Second output", f"{numbers['second_output_btc']:.8f} BTC")
 st.markdown(
     """
     <div class="case-card">
-    <h3>What the transaction shows</h3>
+    <h3>What does not pass the vibe check?</h3>
     <p>
     Thirty Locky-associated addresses were used together as inputs in one Bitcoin transaction.
-    Under the common-input ownership heuristic, this supports the idea that the input addresses
-    may have been controlled by the same wallet or operator group.
+    Under the Common Input Ownership Heuristic, this is a strong clue that the addresses may have been
+    controlled by the same wallet or operator group.
+    </p>
+    <p>
+    This does not prove who controlled the addresses, but it is unusual enough to deserve a closer look.
     </p>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-st.subheader("1. Consolidation flow")
+st.subheader("1. Following the money")
 st.write(
-    "This graph is the main visual story: many Locky-associated input addresses are consolidated, then almost all BTC is sent to one 80 BTC output address."
+    "This is the main visual story: many Locky-associated input addresses are combined in one transaction, then almost all of the Bitcoin moves to one 80 BTC output address."
 )
 flow_graph = build_flow_graph(df_inputs, df_outputs)
 st.pyplot(draw_flow_graph(flow_graph))
@@ -539,13 +528,13 @@ st.pyplot(draw_flow_graph(flow_graph))
 
 
 
-st.subheader("2. Common-input ownership heuristic evidence")
+st.subheader("2. Building the cluster")
 st.write(
-    "This graph explains why the consolidation is treated as a clustering example: the seed address and the other Locky-associated input addresses were spent together in the same transaction."
+    "This graph shows why the transaction is useful for clustering. The seed address and the other Locky-associated input addresses were spent together in the same transaction."
 )
 
 st.info(
-    "How funds reached the seed address: Before the main consolidation event, the seed address received 3 BTC from a transaction funded by three separate input addresses. Although this earlier transaction also involves multiple inputs, the key CIOH example in this case is the later transaction where 30 Locky-associated addresses were co-spent together, creating a much stronger clustering signal."
+    "Before the main consolidation event, the seed address received 3 BTC from a transaction funded by three separate input addresses. That is interesting, but the stronger clue comes later, when 30 Locky-associated addresses are spent together in one transaction."
 )
 cioh_graph, shared_tx_node = build_cioh_graph(df_inputs, df_outputs)
 st.pyplot(draw_cioh_graph(cioh_graph, shared_tx_node))
@@ -553,7 +542,7 @@ st.pyplot(draw_cioh_graph(cioh_graph, shared_tx_node))
 st.subheader("3. Where did the 80 BTC go next?")
 st.write(
     "The 80 BTC output address later appeared as an input in a larger aggregation transaction. "
-    "These later addresses are not labelled in the ransomware dataset, so this section is a trace, not a new attribution claim."
+    "At this point, the trail is still visible, but attribution becomes less certain because the later addresses are not labelled in the ransomware dataset."
 )
 follow_graph = build_follow_on_graph(df_follow_inputs, df_follow_outputs)
 st.pyplot(draw_follow_on_graph(follow_graph))
@@ -564,7 +553,7 @@ follow_col2.metric("BTC combined later", f"{df_follow_inputs['Input BTC'].sum():
 follow_col3.metric("Largest later output", f"{df_follow_outputs['Output BTC'].max():.8f} BTC")
 
 
-st.subheader("Tracing beyond the labelled Locky cluster")
+st.subheader("Where the trail starts to get messy")
 trace_rows = [
     {
         "Step": "1",
@@ -572,7 +561,7 @@ trace_rows = [
         "From address": "30 Locky-associated addresses",
         "To address": "1Q1ifiCyTtoYsrq2MQjZqpHSFREDTteE8E",
         "BTC moved": "80 BTC",
-        "Interpretation": "Initial Locky-linked consolidation",
+        "Interpretation": "Locky-linked funds are consolidated",
     },
     {
         "Step": "2",
@@ -580,7 +569,7 @@ trace_rows = [
         "From address": "1Q1ifiCyTtoYsrq2MQjZqpHSFREDTteE8E (+ 6 other inputs)",
         "To address": "16YhEbMcksa6zgf2rjcAUWy7fZ9TkgFNXF",
         "BTC moved": "500 BTC",
-        "Interpretation": "Funds merge into broader unattributed infrastructure",
+        "Interpretation": "Funds move into broader unattributed infrastructure",
     },
     {
         "Step": "3",
@@ -588,7 +577,7 @@ trace_rows = [
         "From address": "16YhEbMcksa6zgf2rjcAUWy7fZ9TkgFNXF",
         "To address": "17e2WMCFReEsRev8nmC9SdbjDYfXjkGcMM",
         "BTC moved": "100 BTC",
-        "Interpretation": "First redistribution split",
+        "Interpretation": "First visible redistribution split",
     },
     {
         "Step": "4",
@@ -596,7 +585,7 @@ trace_rows = [
         "From address": "16YhEbMcksa6zgf2rjcAUWy7fZ9TkgFNXF",
         "To address": "17VSgeazX2nz4kfEjG5o5Tt6TUqHkWXs7U",
         "BTC moved": "399.99992101 BTC",
-        "Interpretation": "Remaining funds continue onward",
+        "Interpretation": "Remaining funds keep moving",
     },
     {
         "Step": "5",
@@ -617,7 +606,7 @@ trace_rows = [
 ]
 
 st.dataframe(pd.DataFrame(trace_rows), use_container_width=True, hide_index=True)
-st.caption("Beyond the original Locky-associated address cluster, blockchain movement remains visible but attribution becomes less certain because the later wallets were not labelled in the ransomware dataset.")
+st.caption("Beyond the original Locky-associated cluster, the money trail is still visible, but attribution becomes less certain because the later wallets were not labelled in the ransomware dataset.")
 
 st.markdown(
     """
@@ -629,7 +618,7 @@ st.markdown(
     The largest later output was 500 BTC.
     </p>
     <p class="small-note">
-    The funds can still be followed on the blockchain, but it becomes harder to tell who controls the later wallets.
+    This is a good example of the blockchain hide and seek problem: the funds can still be followed, but it becomes harder to know who controls the later wallets.
     </p>
     </div>
     """,
@@ -650,21 +639,21 @@ with st.expander("Show follow-on input and output tables"):
     follow_output_table = build_display_table(df_follow_outputs, "Output Address", "Output BTC")
     st.dataframe(follow_output_table, use_container_width=True, hide_index=True)
 
-st.subheader("Transaction summary")
+st.subheader("Case study summary")
 summary_rows = [
     {
         "Step": "1. Starting point",
-        "What happened": "The seed address is one of 30 Locky-associated inputs in the transaction.",
+        "What happened": "The seed address appears as one of 30 Locky-associated inputs in the transaction.",
         "BTC": f"{numbers['seed_contribution']:.4f} BTC from the seed",
     },
     {
         "Step": "2. CIOH evidence",
-        "What happened": "The 30 input addresses were spent together in one transaction.",
+        "What happened": "The 30 input addresses were spent together, creating a strong clustering clue.",
         "BTC": f"{numbers['total_input_btc']:.4f} BTC combined",
     },
     {
         "Step": "3. Main output",
-        "What happened": "Most of the combined BTC was sent to output address 1Q1ifiCyTtoYsrq2MQjZqpHSFREDTteE8E.",
+        "What happened": "Most of the combined Bitcoin moved to output address 1Q1ifiCyTtoYsrq2MQjZqpHSFREDTteE8E.",
         "BTC": f"{numbers['main_output_btc']:.4f} BTC",
     },
     {
