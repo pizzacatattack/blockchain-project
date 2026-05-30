@@ -8,7 +8,7 @@ from datetime import datetime
 # App settings
 # -----------------------------
 st.set_page_config(
-    page_title="Follow the Money",
+    page_title="Blockchain Hide and Seek",
     page_icon="₿",
     layout="wide"
 )
@@ -25,20 +25,6 @@ st.markdown(
         margin-bottom: 1rem;
     }
     .small-note {font-size: 0.92rem; color: #666;}
-    .btc-coin {
-        width: 76px;
-        height: 76px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 42px;
-        font-weight: 800;
-        color: white;
-        background: radial-gradient(circle at 30% 30%, #ffd166, #f7931a 65%, #b45309);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.18);
-        margin-bottom: 0.5rem;
-    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -73,10 +59,9 @@ CASE_STUDIES = {
     "Locky ransomware (sample address)": {
         "address": "178HGmCfR26dSSiFxJQah1U588p2CjgX7f",
         "summary": 
-            "This sample uses a Bitcoin address associated with the Locky ransomware ecosystem so users can test "
-            "the address analysis feature using a real-world example. The home page tool provides a quick way to "
-            "explore transaction activity, fund movement and transaction structure before diving into the full "
-            "Locky case study.",
+            "This sample uses a Bitcoin address associated with the Locky ransomware ecosystem. "
+            "It gives users a quick way to inspect address activity and follow where funds move next "
+            "before working through the full Locky case study.",
         "look_for": [
             "how many transactions the address has",
             "whether Bitcoin was received, spent or both",
@@ -104,12 +89,12 @@ CASE_STUDIES = {
     },
     "ChipMixer infrastructure (many inputs and outputs)": {
         "address": "bc1qs604c7jv6amk4cxqlnvuxv26hv3e48cds4m0ew",
-        "summary": "ChipMixer was a Bitcoin mixing service designed to make tracing harder by breaking simple links between inputs and outputs. This sample is useful for observing transaction structures that look very different from ordinary wallet activity.",
+        "summary": "ChipMixer was a Bitcoin mixing service designed to make it harder to link a user's original sending address to their new receiving address. This sample is useful for looking at mixer-style transaction behaviour, including pooled inputs and many small outputs.",
         "look_for": [
-            "unusually high input counts",
-            "unusually high output counts",
-            "batching behaviour",
-            "many inputs merging into one output"
+            "lots of inputs from different addresses",
+            "lots of outputs going to new addresses",
+            "repeated small output amounts",
+            "transaction patterns that do not look like ordinary wallet activity"
         ]
     }
 }
@@ -537,9 +522,8 @@ def apply_selected_case_address():
 # -----------------------------
 # Main app
 # -----------------------------
-st.markdown('<div class="btc-coin">₿</div>', unsafe_allow_html=True)
-st.title("Follow the Money")
-st.caption("A beginner-friendly Bitcoin lookup tool for viewing address activity and checking individual transactions.")
+st.title("₿ Blockchain hide and seek")
+st.caption('A beginner-friendly Bitcoin tracing tool designed to help users "follow the money" on the blockchain.')
 
 btc_aud_rate = get_btc_aud_rate()
 
@@ -549,20 +533,20 @@ else:
     st.warning("BTC/AUD price could not be loaded, so AUD estimates may be unavailable.")
 
 st.info(
-    "Tip: Start with an address summary to understand the overall activity, "
-    "then use the transaction lookup tab to inspect a specific transaction in more detail."
+    "Start with an address summary to get the basic picture, "
+    "then copy any interesting transaction ID into Transaction Lookup to take a closer look."
 )
 
-tab_address, tab_transaction = st.tabs(["Address Summary", "Transaction Lookup"])
+tab_address, tab_transaction = st.tabs(["Address summary", "Transaction lookup"])
 
 
 # -----------------------------
 # Tab 1: Address Summary
 # -----------------------------
 with tab_address:
-    st.header("Address Summary")
+    st.header("Address summary")
 
-    st.write("Explore a real-world case study or enter your own Bitcoin address.")
+    st.write("Choose a sample case study or enter your own Bitcoin address to start following the money.")
 
     st.subheader("Try a sample case study")
 
@@ -577,7 +561,7 @@ with tab_address:
 
     if case:
         with st.container(border=True):
-            st.markdown(f"**About this case**")
+            st.markdown("**About this case**")
             st.write(case["summary"])
 
             if case.get("address"):
@@ -585,7 +569,7 @@ with tab_address:
             else:
                 st.warning("This sample needs an address added before it can be used.")
 
-            st.markdown("**What to look for**")
+            st.markdown("**What to clock**")
             for item in case["look_for"]:
                 st.markdown(f"- {item}")
 
@@ -608,7 +592,7 @@ with tab_address:
             received_sats, spent_sats, balance_sats, tx_count = calculate_address_summary(info)
 
             st.divider()
-            st.subheader("Basic Address Stats")
+            st.subheader("Basic address stats")
 
             received_btc = sats_to_btc(received_sats)
             spent_btc = sats_to_btc(spent_sats)
@@ -636,19 +620,23 @@ with tab_address:
 
             st.write(
                 f"Showing {len(txs)} loaded transaction(s). "
-                "Use the button below to load older transactions, 25 at a time."
+                "Load older transactions 25 at a time if you want to keep following the address history."
             )
 
             with st.expander("What does this table mean?"):
                 st.write(
-                    "This table summarises recent transactions involving the searched address. "
-                    "The Inputs and Outputs columns show the structure of the whole transaction. "
-                    "Many inputs and many outputs can sometimes be interesting for blockchain analysis, "
-                    "because it may suggest exchange activity, consolidation, fan-out behaviour or possible mixing patterns."
+                    "This table shows recent transactions involving the Bitcoin address you entered."
                 )
+
                 st.write(
-                    "Received, Spent and Net are calculated from the searched address perspective. "
-                    "The full transaction can include many other addresses."
+                    "The Inputs and Outputs columns show what happened in the whole transaction, "
+                    "not just the address you are investigating. Transactions with lots of inputs or outputs "
+                    "can be worth a closer look, as they may suggest consolidation, funds being split apart, "
+                    "exchange activity or possible mixing behaviour."
+                )
+
+                st.write(
+                    "The Received, Spent and Net columns show what happened from the perspective of the address you entered."
                 )
 
             tx_df = build_recent_transaction_table(txs, address, btc_aud_rate)
@@ -666,37 +654,38 @@ with tab_address:
                 if st.session_state.no_more_txs:
                     st.caption("No more confirmed transactions were returned by the API.")
                 else:
-                    st.caption("This keeps the app fast and avoids loading a huge address history all at once.")
+                    st.caption("This keeps the app fast instead of trying to load a huge address history all at once.")
 
             received_summary_df, received_detail_df, sent_df = build_received_sent_tables(txs, address, btc_aud_rate)
 
             st.divider()
-            st.subheader("Bitcoin Received By This Address")
+            st.subheader("Bitcoin received by this address")
             st.write(
-                "This summary shows one row per transaction where the searched address received Bitcoin. "
-                "Use the detailed source-address view underneath if you want to inspect repeated source patterns."
+                "These are transactions where the address received Bitcoin. "
+                "If the same source address appears repeatedly, it may help show where funds are coming from."
             )
 
             if received_summary_df.empty:
-                st.info("No received Bitcoin found in the loaded transactions.")
+                st.info("No incoming Bitcoin was found in the loaded transactions.")
             else:
                 display_dataframe(received_summary_df)
 
-                with st.expander("Show detailed contributing source addresses"):
+                with st.expander("Show source addresses"):
                     st.write(
-                        "This detailed view may repeat the same transaction ID because one transaction can have many contributing source addresses."
+                        "A single transaction can receive Bitcoin from multiple addresses, "
+                        "so the same transaction ID may appear more than once in this view."
                     )
                     display_dataframe(received_detail_df)
 
             st.divider()
-            st.subheader("Bitcoin Sent Using This Address")
+            st.subheader("Bitcoin sent by this address")
             st.write(
-                "These rows show transactions where this address was part of sending Bitcoin."
-               "Some transactions use funds from multiple addresses together, so the amounts shown may be larger than the amount controlled by this address alone."
-            )      
+                "These are transactions where the address helped send Bitcoin. "
+                "Some transactions combine funds from multiple addresses, so not all of the Bitcoin shown necessarily belonged to this address."
+            )
 
             st.caption(
-                "Tip: Copy a transaction ID from this table and paste it into the Transaction Lookup explorer tab to inspect the full transaction."
+                "Want to investigate further? Copy a transaction ID from the table and paste it into Transaction Lookup."
             )
 
             if sent_df.empty:
@@ -721,10 +710,10 @@ with tab_address:
 # Tab 2: Transaction Lookup
 # -----------------------------
 with tab_transaction:
-    st.header("Transaction Lookup")
+    st.header("Transaction lookup")
 
     st.write(
-        "Enter a Bitcoin transaction ID to view the transaction fee, inputs and outputs."
+        "Enter a Bitcoin transaction ID to see what funded the transaction, where the Bitcoin went and how much was paid in fees."
     )
 
     txid = st.text_input("Transaction ID", key="txid_input").strip()
@@ -746,7 +735,7 @@ with tab_transaction:
             fee_btc = sats_to_btc(fee_sats)
 
             st.divider()
-            st.subheader("Transaction Summary")
+            st.subheader("Transaction summary")
 
             col1, col2, col3, col4 = st.columns(4)
 
@@ -762,12 +751,12 @@ with tab_transaction:
             col7.metric("Fee", format_btc(fee_btc), format_aud(btc_to_aud(fee_btc, btc_aud_rate)))
 
             st.info(
-                "In most normal Bitcoin transactions, total input is slightly higher than total output. "
-                "The difference is the transaction fee paid to miners."
+                "In most Bitcoin transactions, the total input is slightly higher than the total output. "
+                "The difference is the transaction fee."
             )
 
             st.divider()
-            st.subheader("Input Addresses")
+            st.subheader("Input addresses")
             st.write("These are the addresses or previous outputs that funded this transaction.")
 
             if input_df.empty:
@@ -776,7 +765,7 @@ with tab_transaction:
                 display_dataframe(input_df)
 
             st.divider()
-            st.subheader("Output Addresses")
+            st.subheader("Output addresses")
             st.write("These are the addresses that received Bitcoin from this transaction.")
 
             if output_df.empty:
