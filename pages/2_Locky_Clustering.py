@@ -548,8 +548,7 @@ st.pyplot(draw_cioh_graph(cioh_graph, shared_tx_node))
 
 st.subheader("3. Where did the 80 BTC go next?")
 st.write(
-    "The 80 BTC output address later appeared as an input in a larger aggregation transaction. "
-    "At this point, the trail is still visible, but attribution becomes less certain because the later addresses are not labelled in the ransomware dataset."
+    "The 80 BTC output address did not remain idle for long. It later appeared in a much larger transaction involving several additional inputs. The money trail is still visible, but the story becomes less clear from this point onwards. Investigators can continue following the Bitcoin, however it becomes harder to determine who controls the later addresses."
 )
 follow_graph = build_follow_on_graph(df_follow_inputs, df_follow_outputs)
 st.pyplot(draw_follow_on_graph(follow_graph))
