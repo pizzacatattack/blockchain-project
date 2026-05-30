@@ -522,7 +522,7 @@ def apply_selected_case_address():
 # -----------------------------
 # Main app
 # -----------------------------
-st.title("₿ Blockchain hide and seek")
+st.title("₿ Blockchain Hide and Seek")
 st.caption('A beginner-friendly Bitcoin tracing tool designed to help users "follow the money" on the blockchain.')
 
 btc_aud_rate = get_btc_aud_rate()
