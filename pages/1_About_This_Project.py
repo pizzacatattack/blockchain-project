@@ -13,7 +13,8 @@ st.write(
 )
 
 st.warning(
-    "This app can highlight suspicious-looking transaction patterns, but it cannot confirm who owns a Bitcoin address or whether a crime has occurred."
+    "Patterns on the blockchain can point investigators in the right direction, but they are not proof. "
+    "This application cannot confirm who owns an address or whether a transaction is linked to criminal activity."
 )
 
 st.header("What this project does")
