@@ -1010,6 +1010,8 @@ st.markdown(
     <div class="case-card">
         <p>
            Blockchain tracing is a powerful tool, but it is not a crystal ball. This case study highlights transaction structure: many inputs, many outputs and repeated output values.
+        </p>  
+        <p> 
            These patterns can point investigators in the right direction, but they do not prove who controlled each address or whether every participant was acting unlawfully.
         </p>
     </div>

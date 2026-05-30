@@ -172,6 +172,8 @@ def analyse_clustering(txs, address):
 
     multi_input_txs = 0
     large_input_group_txs = 0
+    largest_input_count = 0
+
     co_spent_addresses = Counter()
 
     for tx in txs:
@@ -179,8 +181,11 @@ def analyse_clustering(txs, address):
 
         if address in inputs:
             unique_inputs = sorted(set(inputs))
+            input_count = len(unique_inputs)
 
-            if len(unique_inputs) >= 2:
+            largest_input_count = max(largest_input_count, input_count)
+
+            if input_count >= 2:
                 multi_input_txs += 1
                 score += 1
 
@@ -188,29 +193,50 @@ def analyse_clustering(txs, address):
                     if other != address:
                         co_spent_addresses[other] += 1
 
-            if len(unique_inputs) >= 5:
+            if input_count >= 5:
                 large_input_group_txs += 1
-                score += 1
+                score += 2
 
-    repeated_cospend = [addr for addr, count in co_spent_addresses.items() if count >= 2]
+            if input_count >= 10:
+                score += 2
+
+            if input_count >= 20:
+                score += 3
+
+    repeated_cospend = [
+        addr for addr, count in co_spent_addresses.items()
+        if count >= 2
+    ]
 
     if repeated_cospend:
         score += 1
 
     if multi_input_txs:
-        reasons.append(f"This address was spent together with other input addresses in {multi_input_txs} transaction(s).")
+        reasons.append(
+            f"This address was spent together with other input addresses in {multi_input_txs} transaction(s)."
+        )
 
     if large_input_group_txs:
-        reasons.append(f"{large_input_group_txs} transaction(s) involved a larger group of input addresses, which may be worth a closer look.")
+        reasons.append(
+            f"{large_input_group_txs} transaction(s) involved a larger group of input addresses."
+        )
+
+    if largest_input_count >= 10:
+        reasons.append(
+            f"The largest transaction used {largest_input_count} input addresses together, which is a strong clustering clue."
+        )
 
     if repeated_cospend:
-        reasons.append("Some addresses were co-spent with this address more than once, which strengthens the clustering clue.")
+        reasons.append(
+            "Some addresses were co-spent with this address more than once, which strengthens the clustering clue."
+        )
 
     if not reasons:
-        reasons.append("Nothing in the loaded transactions strongly suggests clustering behaviour.")
+        reasons.append(
+            "Nothing in the loaded transactions strongly suggests clustering behaviour."
+        )
 
     return score, reasons
-
 
 def analyse_peel_chain(txs, address):
     score = 0
@@ -391,6 +417,11 @@ max_pages = st.slider(
     max_value=10,
     value=3,
     help="Each page loads up to 25 confirmed transactions. More pages gives the checker more to inspect, but may take longer for busy addresses."
+)
+
+st.info(
+    f"Only the most recent portion of the money trail is loaded. "
+    f"This check currently examines up to {max_pages * 25} confirmed transactions, so older activity may not be reflected in the results."
 )
 
 if max_pages >= 7:
