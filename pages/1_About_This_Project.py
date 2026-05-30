@@ -85,7 +85,6 @@ Look for patterns that do not pass the vibe check, such as clustering, peel chai
 Explore the case studies and see if you can follow the money yourself.
 """)
 
-
 st.header("Case studies included")
 
 st.write(
@@ -145,4 +144,10 @@ st.header("Development note")
 
 st.write(
     "This student project was developed as an AI-assisted blockchain tracing application, with AI used as a development support tool for coding, implementation and debugging."
+)
+
+st.divider()
+
+st.caption(
+    "Developed by Shahera as part of a cyber security research project on blockchain tracing and cryptocurrency investigations. Some transactions pass the vibe check. Some don't."
 )
