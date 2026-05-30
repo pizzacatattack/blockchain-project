@@ -590,8 +590,8 @@ def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
             node_colours.append("#fca5a5")
             node_sizes.append(1800)
 
-    width = max(13, len(graph_df) * 2.2)
-    fig, ax = plt.subplots(figsize=(width, 5.8))
+    width = max(18, len(graph_df) * 2.8)
+    fig, ax = plt.subplots(figsize=(18, 5.5))
     nx.draw(
         G,
         pos,
@@ -614,7 +614,7 @@ def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
         mpatches.Patch(color="#fca5a5", label="Peeled value"),
     ]
     ax.legend(handles=legend_handles, loc="lower right")
-    ax.set_title("Conti peel-chain tracing path", pad=18)
+    ax.set_title("Following the money through a peel chain", pad=18)
     ax.axis("off")
     fig.tight_layout()
     return fig
