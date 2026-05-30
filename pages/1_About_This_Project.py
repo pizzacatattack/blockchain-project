@@ -96,7 +96,7 @@ st.write(
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader("Locky ransomware")
+    st.subheader("Locky clustering")
     st.write(
         "Learn how clustering techniques can help investigators identify groups of addresses that may belong to the same entity."
 
@@ -150,5 +150,5 @@ st.write(
 st.divider()
 
 st.caption(
-    "Developed by Shahera as part of a cyber security research project on blockchain tracing and cryptocurrency investigations. Some transactions pass the vibe check. Some don't."
+    "Created by Shahera. Some transactions pass the vibe check. Some don't. Clock it!"
 )
