@@ -40,61 +40,61 @@ CASE_STUDIES = {
     "Select a sample case study...": None,
     "CryptoLocker ransomware (high transaction activity)": {
         "address": "1LXrSb67EaH1LGc6d6kWHq8rgv4ZBQAcpU",
-        "summary": "CryptoLocker was an early ransomware family that demanded Bitcoin payments from victims. This sample is useful because it has a lot of transaction activity, making it easier to observe repeated payment and movement patterns.",
+        "summary": "CryptoLocker helped introduce Bitcoin to the world of ransomware. With plenty of transaction activity to explore, this address is a good place to start learning how to follow the money.",
         "look_for": [
-            "many incoming payments",
-            "repeated transaction activity",
-            "funds later moving out of the address"
+            "lots of incoming payments",
+            "repeated transaction patterns",
+            "where the Bitcoin moves next",
+            "whether funds appear to be consolidated or redistributed"
         ]
     },
     "Colonial Pipeline / DarkSide (cash-out wallet)": {
         "address": "bc1qq2euq8pw950klpjcawuy4uj39ym43hs6cfsegq",
-        "summary": "This sample relates to the Colonial Pipeline / DarkSide ransomware case. The address can be used to inspect cash-out style movement after a high-profile ransom incident.",
+        "summary": "The Colonial Pipeline ransomware attack brought cryptocurrency crime into the global spotlight. The ransom payment was easy to spot. Following the money afterwards is where the real game of hide and seek begins.",       
         "look_for": [
-            "large value movement",
-            "cash-out or onward transfer behaviour",
-            "how quickly funds leave the address"
+            "large value transfers",
+            "the first steps in the money trail",
+            "where investigators would look next",
+            "whether the funds appear to be trying to disappear"
         ]
     },
     "Locky ransomware (sample address)": {
         "address": "178HGmCfR26dSSiFxJQah1U588p2CjgX7f",
         "summary": 
-            "This sample uses a Bitcoin address associated with the Locky ransomware ecosystem. "
-            "It gives users a quick way to inspect address activity and follow where funds move next "
-            "before working through the full Locky case study.",
+            "Locky was one of the biggest ransomware families of its time. This address is associated with the Locky ecosystem and can be used to explore how investigators use clustering techniques to identify addresses that may belong to the same entity.",
         "look_for": [
-            "how many transactions the address has",
-            "whether Bitcoin was received, spent or both",
-            "how funds move in and out of the address",
-            "transaction structure visible in the summary tables"
+            "addresses being used together in transactions",
+            "possible clustering behaviour",
+            "where the money moves next"
         ]
     },
     "Conti ransomware (large cash-out wallet)": {
         "address": "19iqYbeATe4RxghQZJnYVFU4mjUUu76EA6",
-        "summary": "Conti was a large ransomware operation. This sample is intended to show a larger cash-out or aggregation wallet where funds may converge before onward movement.",
+        "summary": "Conti was one of the most prolific ransomware groups in the world. This address has been linked to a suspected peel chain, making it a useful example of how criminals attempt to 'ghost' their funds by repeatedly moving them between addresses.",
         "look_for": [
-            "aggregation behaviour",
-            "large outgoing transfers",
-            "many inputs or outputs in related transactions"
+            "small amounts being 'peeled' off",
+            "the remaining balance moving forward",
+            "a possible peel chain pattern"
         ]
     },
     "Binance hack (downstream recombination wallet)": {
         "address": "bc1q2rdpyt8ed9pm56u9t0zjf94zrdu6gufa47pf62",
-        "summary": "This sample relates to a downstream address from the Binance hack analysis. It is useful for exploring how stolen funds can be fragmented and later recombined.",
+        "summary": "This case study follows Bitcoin linked to the Binance hack. The initial theft was easy to identify, but the real challenge begins afterwards as the funds are moved, split and redistributed. Can you still follow the money?",
         "look_for": [
-            "large transaction values",
-            "fragmentation and recombination",
-            "unusual transaction structures"
+            "where the stolen Bitcoin moves next",
+            "funds being split across multiple addresses",
+            "funds being recombined later",
+            "whether the trail starts to go cold"
         ]
     },
     "ChipMixer infrastructure (many inputs and outputs)": {
         "address": "bc1qs604c7jv6amk4cxqlnvuxv26hv3e48cds4m0ew",
-        "summary": "ChipMixer was a Bitcoin mixing service designed to make it harder to link a user's original sending address to their new receiving address. This sample is useful for looking at mixer-style transaction behaviour, including pooled inputs and many small outputs.",
+        "summary": "ChipMixer was a cryptocurrency mixer designed to make tracing more difficult. By pooling funds from many users and breaking them into smaller outputs, it attempted to hide the link between senders and receivers.",
         "look_for": [
-            "lots of inputs from different addresses",
-            "lots of outputs going to new addresses",
+            "lots of inputs",
+            "lots of outputs",
             "repeated small output amounts",
-            "transaction patterns that do not look like ordinary wallet activity"
+            "transactions that do not pass the vibe check"
         ]
     }
 }
@@ -548,7 +548,7 @@ with tab_address:
 
     st.write("Choose a sample case study or enter your own Bitcoin address to start following the money.")
 
-    st.subheader("Try a sample case study")
+    st.subheader("Learn a case from the real world")
 
     selected_case = st.selectbox(
         "Choose a sample",
