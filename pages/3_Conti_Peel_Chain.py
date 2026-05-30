@@ -1009,9 +1009,8 @@ st.markdown(
     """
     <div class="case-card">
         <p>
-            Blockchain tracing can show where Bitcoin moved, but it does not automatically reveal who controlled
-            every later address. In this case, the labels describe transaction structure: starting flow, continuing
-            flow, peeled value and consolidation. They are clues for investigation, not proof of identity.
+           Blockchain tracing is a powerful tool, but it is not a crystal ball. This case study highlights transaction structure: many inputs, many outputs and repeated output values.
+           These patterns can point investigators in the right direction, but they do not prove who controlled each address or whether every participant was acting unlawfully.
         </p>
     </div>
     """,
