@@ -558,16 +558,16 @@ def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
     for i, row in graph_df.iterrows():
         step = int(row["Step"])
         main_node = f"Step {step}"
-        pos[main_node] = (i * 3.4, 0.9)
+        pos[main_node] = (i * 3.0, 0.5)
         labels[main_node] = f"{row['Continuing BTC']:.1f} BTC"
         G.add_node(main_node)
 
         if step == 1:
             node_colours.append("#f97316")
-            node_sizes.append(1800)
+            node_sizes.append(2600)
         else:
             node_colours.append("#93c5fd")
-            node_sizes.append(1650)
+            node_sizes.append(2400)
 
     # Simple arrows between continuing balances. No edge labels because the next node
     # already shows the continuing BTC amount.
@@ -583,12 +583,12 @@ def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
             step = int(row["Step"])
             peel_node = f"Peel {step}"
             main_node = f"Step {step}"
-            pos[peel_node] = (i * 3.4, -0.75)
+            pos[peel_node] = (i * 3.0, -0.15)
             labels[peel_node] = f"{peeled_value:.1f} BTC"
             G.add_node(peel_node)
             G.add_edge(main_node, peel_node)
             node_colours.append("#fca5a5")
-            node_sizes.append(1250)
+            node_sizes.append(1800)
 
     width = max(13, len(graph_df) * 2.2)
     fig, ax = plt.subplots(figsize=(width, 5.8))
@@ -733,7 +733,7 @@ def draw_consolidation_graph(final_spending_txid: str, traced_input_value: float
     for node in G.nodes():
         if node == tx_node:
             node_colours.append("#9ca3af")   # grey
-            node_sizes.append(1800)
+            node_sizes.append(2600)
 
         elif node.startswith("Input"):
             value = None
