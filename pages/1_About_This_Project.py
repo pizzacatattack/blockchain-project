@@ -36,9 +36,6 @@ st.write(
 )
 
 st.markdown("""
-**Data source**
-- **Blockstream API** is used to retrieve live Bitcoin address and transaction data.
-
 **Tools used**
 - Blockstream API to retrieve live Bitcoin transaction data
 - Python to build the application logic
@@ -46,10 +43,16 @@ st.markdown("""
 - NetworkX for graph-based visualisations
 - Matplotlib for charts and diagrams
 - Streamlit to publish the application online
+""")
 
-**Tracing methods used**
-Blockchain tracing is a bit like a game of hide and seek. This application introduces some of the techniques investigators use to uncover patterns and follow the money, including:
 
+st.subheader("Tracing methods used")
+
+st.write(
+    "Blockchain tracing is a bit like a game of hide and seek. This application introduces some of the techniques investigators use to uncover patterns and follow the money."
+)
+
+st.markdown("""
 - tracking Bitcoin as it moves between addresses
 - visualising transaction flows using graphs
 - identifying possible address clusters
