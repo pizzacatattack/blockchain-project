@@ -587,8 +587,8 @@ with st.expander("Show references and data sources"):
         """
         Blockstream (n.d.) *Blockstream API documentation*. Available at: https://blockstream.info/explorer-api.
 
-        U.S. Department of Justice (2023) *ChipMixer domain seized by law enforcement*. Available at: https://www.justice.gov/opa/pr/chipmixer-domain-seized-law-enforcement.
+        U.S. Department of Justice (2023) *Justice Department Investigation Leads to Takedown of Darknet Cryptocurrency Mixer that Processed Over $3 Billion of Unlawful Transactions*. Available at: https://www.justice.gov/archives/opa/pr/justice-department-investigation-leads-takedown-darknet-cryptocurrency-mixer-processed-over-3.
 
-        Europol (2023) *ChipMixer taken down for laundering criminal proceeds*. Available at: https://www.europol.europa.eu/media-press/newsroom/news/multi-billion-euro-crypto-laundering-service-chipmixer-taken-down.
+        Europol (2023) *One of the darkweb’s largest cryptocurrency laundromats washed out*. Available at: https://www.europol.europa.eu/media-press/newsroom/news/one-of-darkwebs-largest-cryptocurrency-laundromats-washed-out.
         """
     )
