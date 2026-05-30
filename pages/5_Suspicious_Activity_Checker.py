@@ -11,6 +11,24 @@ API_BASE = "https://blockstream.info/api"
 SATOSHIS_PER_BTC = 100_000_000
 
 
+st.markdown(
+    """
+    <style>
+    .block-container {padding-top: 2rem; padding-bottom: 2rem;}
+    .case-card {
+        border: 1px solid rgba(120, 120, 120, 0.25);
+        border-radius: 18px;
+        padding: 1rem 1.2rem;
+        background: rgba(250, 250, 250, 0.04);
+        margin-bottom: 1rem;
+    }
+    .small-note {font-size: 0.92rem; color: #666;}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
 def sats_to_btc(value):
     if value is None:
         return 0.0
@@ -163,16 +181,16 @@ def analyse_clustering(txs, address):
         score += 1
 
     if multi_input_txs:
-        reasons.append(f"This address appears in {multi_input_txs} transaction(s) with other input addresses.")
+        reasons.append(f"This address was spent together with other input addresses in {multi_input_txs} transaction(s).")
 
     if large_input_group_txs:
-        reasons.append(f"{large_input_group_txs} transaction(s) used this address with a larger group of input addresses.")
+        reasons.append(f"{large_input_group_txs} transaction(s) involved a larger group of input addresses, which may be worth a closer look.")
 
     if repeated_cospend:
-        reasons.append("Some input addresses appear with this address more than once.")
+        reasons.append("Some addresses were co-spent with this address more than once, which strengthens the clustering clue.")
 
     if not reasons:
-        reasons.append("No strong clustering clues were found in the loaded transactions.")
+        reasons.append("Nothing in the loaded transactions strongly suggests clustering behaviour.")
 
     return score, reasons
 
@@ -201,15 +219,15 @@ def analyse_peel_chain(txs, address):
 
     if peel_like_count:
         reasons.append(
-            f"{peel_like_count} outgoing transaction(s) had a peel-chain-like shape: one larger output and one much smaller output."
+            f"{peel_like_count} outgoing transaction(s) had a peel-chain-like shape: most value continued forward while a smaller amount was separated."
         )
 
     if peel_like_count >= 2:
         score += 1
-        reasons.append("More than one transaction shows a similar large-output/small-output pattern.")
+        reasons.append("More than one transaction shows a similar pattern, which makes the clue more interesting.")
 
     if not reasons:
-        reasons.append("No strong peel-chain-like clues were found in the loaded transactions.")
+        reasons.append("Nothing in the loaded transactions strongly suggests peel-chain behaviour.")
 
     return score, reasons
 
@@ -242,16 +260,16 @@ def analyse_mixer_like(txs):
             score += 2
 
     if high_input_output_txs:
-        reasons.append(f"{high_input_output_txs} transaction(s) had many inputs and many outputs.")
+        reasons.append(f"{high_input_output_txs} transaction(s) had many inputs and many outputs, which can make tracing more difficult.")
 
     if high_output_txs:
         reasons.append(f"{high_output_txs} transaction(s) had a large number of outputs.")
 
     if equal_output_txs:
-        reasons.append(f"{equal_output_txs} transaction(s) had repeated equal-value outputs.")
+        reasons.append(f"{equal_output_txs} transaction(s) had repeated equal-value outputs, a pattern often worth clocking in mixer-style transactions.")
 
     if not reasons:
-        reasons.append("No strong mixer-like clues were found in the loaded transactions.")
+        reasons.append("Nothing in the loaded transactions strongly suggests mixer-like behaviour.")
 
     return score, reasons
 
@@ -296,37 +314,39 @@ def build_summary_table(txs, address):
     return pd.DataFrame(rows)
 
 
-st.title("Suspicious Activity Check")
+st.title("₿ Suspicious activity checker")
+st.caption('A quick "does this pass the vibe check?" screen for Bitcoin addresses.')
 
 st.write(
-    "Enter a Bitcoin address to check whether its recent transaction behaviour has clues similar to the case studies: "
-    "clustering, peel-chain-like movement or mixer-like activity."
+    "Enter a Bitcoin address and this page will look for basic blockchain clues linked to the case studies: "
+    "clustering, peel-chain-style movement and mixer-like activity."
 )
 
 st.warning(
-    "This page looks for clues only. It cannot prove who owns an address or whether a crime has occurred."
+    "Blockchain tracing is a powerful tool, but it is not a crystal ball. "
+    "This checker can highlight patterns that deserve a closer look, but it cannot identify who controls an address or prove that a crime occurred."
 )
 
-with st.expander("What do the indicators mean?"):
+with st.expander("What is this checker looking for?"):
     st.markdown(
         """
-        **Clustering clues** look for cases where an address is used together with other input addresses.
+        **Clustering clues** look for addresses being spent together in the same transaction. This can suggest that the same person, wallet or group may control them.
 
-        **Peel-chain clues** look for transactions where funds appear to move onward while smaller amounts are separated along the way.
+        **Peel-chain clues** look for the classic pattern where most of the Bitcoin keeps moving forward while smaller amounts are repeatedly separated.
 
-        **Mixer-like clues** look for transaction structures such as many inputs, many outputs or repeated equal-value outputs.
+        **Mixer-like clues** look for transactions with lots of inputs, lots of outputs or repeated equal-value outputs. These patterns can make it harder to connect a sender to a receiver.
 
-        These are simple screening rules. They are useful for deciding what to inspect next, not for making final conclusions.
+        These are simple screening rules. Think of them as a first-pass vibe check, not a final investigation finding.
         """
     )
 
 sample_addresses = {
     "Choose a sample or enter your own": "",
-    "Locky sample address": "178HGmCfR26dSSiFxJQah1U588p2CjgX7f",
+    "Locky ransomware sample": "178HGmCfR26dSSiFxJQah1U588p2CjgX7f",
     "Custom": "",
 }
 
-sample_choice = st.selectbox("Sample address", list(sample_addresses.keys()))
+sample_choice = st.selectbox("Pick a trail to follow", list(sample_addresses.keys()))
 default_address = sample_addresses.get(sample_choice, "")
 
 address = st.text_input(
@@ -336,14 +356,14 @@ address = st.text_input(
 ).strip()
 
 max_pages = st.slider(
-    "How much transaction history should be loaded?",
+    "How much of the money trail should be loaded?",
     min_value=1,
     max_value=4,
     value=2,
-    help="Each page loads up to 25 confirmed transactions. More pages may take longer."
+    help="Each page loads up to 25 confirmed transactions. More pages gives the checker more to inspect, but may take longer."
 )
 
-if st.button("Run suspicious activity check"):
+if st.button("Run the vibe check"):
     if not address:
         st.error("Please enter a Bitcoin address first.")
         st.stop()
@@ -364,25 +384,39 @@ if st.button("Run suspicious activity check"):
     peel_score, peel_reasons = analyse_peel_chain(txs, address)
     mixer_score, mixer_reasons = analyse_mixer_like(txs)
 
-    st.header("Indicator summary")
+    clustering_level = classify_level(clustering_score)
+    peel_level = classify_level(peel_score)
+    mixer_level = classify_level(mixer_score)
+
+    st.header("What should you clock?")
+
+    st.markdown(
+        f"""
+        <div class="case-card">
+            <h3>Quick read</h3>
+            <p><strong>Clustering clues:</strong> {clustering_level}</p>
+            <p><strong>Peel-chain clues:</strong> {peel_level}</p>
+            <p><strong>Mixer-like clues:</strong> {mixer_level}</p>
+            <p class="small-note">
+                Low, Medium and High are based on simple clue counts from the loaded transactions. They are useful for deciding where to look next, not for making final claims.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.metric("Clustering clues", classify_level(clustering_score))
+        st.metric("Clustering", clustering_level)
 
     with col2:
-        st.metric("Peel-chain clues", classify_level(peel_score))
+        st.metric("Peel chain", peel_level)
 
     with col3:
-        st.metric("Mixer-like clues", classify_level(mixer_score))
+        st.metric("Mixer-like", mixer_level)
 
-    st.caption(
-        "Low, Medium and High are based on simple clue counts from the loaded transactions. "
-        "They are not proof of suspicious activity."
-    )
-
-    st.header("Why these indicators were shown")
+    st.header("Why did the checker flag these?")
 
     with st.expander("Clustering clues", expanded=True):
         for reason in clustering_reasons:
@@ -398,9 +432,13 @@ if st.button("Run suspicious activity check"):
 
     st.header("Loaded transaction summary")
 
+    st.write(
+        "These are the transactions the checker looked at. Copy a transaction ID into the Transaction Lookup page if you want to dig deeper."
+    )
+
     summary_df = build_summary_table(txs, address)
     st.dataframe(summary_df, use_container_width=True, hide_index=True)
 
     st.info(
-        "Tip: Copy any transaction ID from this table and inspect it in the Transaction ID Explorer for more detail."
+        "Tip: A high score is not a verdict. It just means the address has patterns worth investigating further. Follow the money, then check the context."
     )
