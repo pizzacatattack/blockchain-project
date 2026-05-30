@@ -116,9 +116,14 @@ def address_output_value(tx, address):
 
 
 def classify_level(score):
-    if score >= 4:
+    """Convert a raw clue score into a plain-English level.
+
+    The thresholds are deliberately cautious. More loaded transactions can create
+    more clues, so the checker should not jump to High too easily.
+    """
+    if score >= 6:
         return "High"
-    if score >= 2:
+    if score >= 3:
         return "Medium"
     return "Low"
 
@@ -136,17 +141,29 @@ def repeated_equal_outputs(outputs, min_repeats=3):
 
 
 def is_peel_like(outputs):
+    """Return True when outputs have a simple peel-chain-like shape.
+
+    A peel chain does not always have exactly two outputs. This relaxed rule looks
+    for one dominant continuing output plus one or more smaller outputs. It is a
+    clue only, not proof.
+    """
     values = sorted([value for _, value in outputs if value > 0], reverse=True)
 
-    if len(values) != 2:
+    if len(values) < 2:
         return False
 
-    large, small = values
+    large = values[0]
+    smaller_values = values[1:]
+    second_largest = smaller_values[0]
+    total_output = sum(values)
 
-    if small == 0:
+    if total_output <= 0 or second_largest <= 0:
         return False
 
-    return large >= small * 5
+    dominant_share = large / total_output
+
+    # Main idea: most value continues forward, while smaller value is separated.
+    return dominant_share >= 0.60 and large >= second_largest * 3
 
 
 def analyse_clustering(txs, address):
@@ -314,6 +331,17 @@ def build_summary_table(txs, address):
     return pd.DataFrame(rows)
 
 
+def build_indicator_score_table(clustering_score, peel_score, mixer_score):
+    """Build a small table for the clue score chart."""
+    return pd.DataFrame(
+        [
+            {"Indicator": "Clustering", "Score": clustering_score, "Level": classify_level(clustering_score)},
+            {"Indicator": "Peel chain", "Score": peel_score, "Level": classify_level(peel_score)},
+            {"Indicator": "Mixer-like", "Score": mixer_score, "Level": classify_level(mixer_score)},
+        ]
+    )
+
+
 st.title("₿ Suspicious activity checker")
 st.caption('A quick "does this pass the vibe check?" screen for Bitcoin addresses.')
 
@@ -343,6 +371,8 @@ with st.expander("What is this checker looking for?"):
 sample_addresses = {
     "Choose a sample or enter your own": "",
     "Locky ransomware sample": "178HGmCfR26dSSiFxJQah1U588p2CjgX7f",
+    "Conti peel-chain sample": "13XELohdTXGbgHpwRrNHMiuKrjA7a9wM2z",
+    "ChipMixer sample": "bc1qs604c7jv6amk4cxqlnvuxv26hv3e48cds4m0ew",
     "Custom": "",
 }
 
@@ -358,10 +388,16 @@ address = st.text_input(
 max_pages = st.slider(
     "How much of the money trail should be loaded?",
     min_value=1,
-    max_value=4,
-    value=2,
-    help="Each page loads up to 25 confirmed transactions. More pages gives the checker more to inspect, but may take longer."
+    max_value=10,
+    value=3,
+    help="Each page loads up to 25 confirmed transactions. More pages gives the checker more to inspect, but may take longer for busy addresses."
 )
+
+if max_pages >= 7:
+    st.caption(
+        "Heads up: loading a longer trail can take a little while. "
+        "If the address is very busy, start smaller and dig deeper only if something looks interesting."
+    )
 
 if st.button("Run the vibe check"):
     if not address:
@@ -378,7 +414,7 @@ if st.button("Run the vibe check"):
         )
         st.stop()
 
-    st.success(f"Loaded {len(txs)} confirmed transaction(s).")
+    st.success(f"Loaded {len(txs)} confirmed transaction(s) for the vibe check.")
 
     clustering_score, clustering_reasons = analyse_clustering(txs, address)
     peel_score, peel_reasons = analyse_peel_chain(txs, address)
@@ -394,9 +430,10 @@ if st.button("Run the vibe check"):
         f"""
         <div class="case-card">
             <h3>Quick read</h3>
-            <p><strong>Clustering clues:</strong> {clustering_level}</p>
-            <p><strong>Peel-chain clues:</strong> {peel_level}</p>
-            <p><strong>Mixer-like clues:</strong> {mixer_level}</p>
+            <p><strong>Transactions checked:</strong> {len(txs)}</p>
+            <p><strong>Clustering clues:</strong> {clustering_level} <span class="small-note">(score {clustering_score})</span></p>
+            <p><strong>Peel-chain clues:</strong> {peel_level} <span class="small-note">(score {peel_score})</span></p>
+            <p><strong>Mixer-like clues:</strong> {mixer_level} <span class="small-note">(score {mixer_score})</span></p>
             <p class="small-note">
                 Low, Medium and High are based on simple clue counts from the loaded transactions. They are useful for deciding where to look next, not for making final claims.
             </p>
@@ -415,6 +452,17 @@ if st.button("Run the vibe check"):
 
     with col3:
         st.metric("Mixer-like", mixer_level)
+
+    score_df = build_indicator_score_table(clustering_score, peel_score, mixer_score)
+
+    st.subheader("Clue score chart")
+    st.write(
+        "This chart shows the raw clue score behind each level. Higher bars mean there were more patterns worth a closer look."
+    )
+    st.bar_chart(score_df.set_index("Indicator")["Score"], use_container_width=True)
+
+    with st.expander("Show raw clue scores"):
+        st.dataframe(score_df, use_container_width=True, hide_index=True)
 
     st.header("Why did the checker flag these?")
 
