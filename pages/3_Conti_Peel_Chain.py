@@ -615,9 +615,8 @@ def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
     ]
     ax.legend(handles=legend_handles, loc="lower right")
     ax.set_title("Following the money through a peel chain", pad=18)
-    ax.axis("off")
-    fig.tight_layout()
-    return fig
+    ax.set_xlim(-0.8, (len(graph_df) - 1) * 3.0 + 0.8)
+    ax.set_ylim(-1.2, 0.9)
 
 
 
