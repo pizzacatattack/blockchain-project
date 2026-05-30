@@ -494,12 +494,19 @@ except requests.exceptions.RequestException as exc:
 numbers = calculate_case_numbers(df_inputs, df_outputs)
 follow_numbers = calculate_case_numbers(df_follow_inputs, df_follow_outputs)
 
-col1, col2, col3, col4, col5 = st.columns(5)
-col1.metric("Locky-associated inputs", numbers["input_count"])
-col2.metric("Seed contribution", f"{numbers['seed_contribution']:.4f} BTC")
-col3.metric("BTC combined", f"{numbers['total_input_btc']:.4f} BTC")
-col4.metric("Main output", f"{numbers['main_output_btc']:.4f} BTC")
-col5.metric("Second output", f"{numbers['second_output_btc']:.8f} BTC")
+st.info(
+    f"""
+**What happened?**
+
+• 30 Locky-associated addresses were spent together
+
+• The addresses combined approximately **{numbers['total_input_btc']:.2f} BTC**
+
+• Almost all funds were sent to a single output (**{numbers['main_output_btc']:.2f} BTC**)
+
+• This transaction provides a strong clustering signal under the Common Input Ownership Heuristic
+"""
+)
 
 st.markdown(
     """
@@ -547,10 +554,19 @@ st.write(
 follow_graph = build_follow_on_graph(df_follow_inputs, df_follow_outputs)
 st.pyplot(draw_follow_on_graph(follow_graph))
 
-follow_col1, follow_col2, follow_col3 = st.columns(3)
-follow_col1.metric("Follow-on transaction inputs", df_follow_inputs["Input Address"].nunique())
-follow_col2.metric("BTC combined later", f"{df_follow_inputs['Input BTC'].sum():.8f} BTC")
-follow_col3.metric("Largest later output", f"{df_follow_outputs['Output BTC'].max():.8f} BTC")
+st.info(
+    f"""
+**What happened next?**
+
+• The 80 BTC output later appeared alongside **{df_follow_inputs['Input Address'].nunique()} inputs**
+
+• Approximately **{df_follow_inputs['Input BTC'].sum():.0f} BTC** was combined
+
+• The largest output was **{df_follow_outputs['Output BTC'].max():.0f} BTC**
+
+• The money trail remains visible, but ownership becomes less certain
+"""
+)
 
 
 st.subheader("Where the trail starts to get messy")
