@@ -26,7 +26,7 @@ import networkx as nx
 import pandas as pd
 import requests
 import streamlit as st
-
+from io import BytesIO
 
 # -----------------------------
 # Fixed case settings
@@ -618,7 +618,12 @@ def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
     ax.set_xlim(-0.8, (len(graph_df) - 1) * 3.0 + 0.8)
     ax.set_ylim(-1.2, 0.9)
 
-
+def fig_to_png(fig):
+    """Convert a Matplotlib figure to a PNG image for Streamlit display."""
+    buf = BytesIO()
+    fig.savefig(buf, format="png", dpi=180, bbox_inches="tight")
+    buf.seek(0)
+    return buf
 
 
 def get_consolidation_details(peel_df: pd.DataFrame) -> Optional[Dict[str, Any]]:
@@ -938,7 +943,10 @@ st.write(
     "This graph follows the continuing balance as it moves from one spent output to the next. "
     "The pink nodes show the value peeled away from the main flow at each step."
 )
-st.pyplot(draw_peel_graph(peel_df, graph_steps=graph_steps), use_container_width=True)
+# st.pyplot(draw_peel_graph(peel_df, graph_steps=graph_steps), use_container_width=True)
+fig = draw_peel_graph(peel_df, graph_steps=graph_steps)
+st.image(fig_to_png(fig), use_container_width=True)
+plt.close(fig)
 
 st.subheader("2. Evidence table: step by step")
 st.write(
