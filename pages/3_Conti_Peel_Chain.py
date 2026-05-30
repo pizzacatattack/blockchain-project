@@ -26,7 +26,6 @@ import networkx as nx
 import pandas as pd
 import requests
 import streamlit as st
-from io import BytesIO
 
 # -----------------------------
 # Fixed case settings
@@ -559,7 +558,7 @@ def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
         step = int(row["Step"])
         main_node = f"Step {step}"
         pos[main_node] = (i * 3.0, 0.5)
-        labels[main_node] = f"{row['Continuing BTC']:.1f} BTC"
+        labels[main_node] = f"{row['Continuing BTC']:.1f}\nBTC"
         G.add_node(main_node)
 
         if step == 1:
@@ -584,7 +583,7 @@ def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
             peel_node = f"Peel {step}"
             main_node = f"Step {step}"
             pos[peel_node] = (i * 3.0, -0.15)
-            labels[peel_node] = f"{peeled_value:.1f} BTC"
+            labels[peel_node] = f"{peeled_value:.1f}\nBTC"
             G.add_node(peel_node)
             G.add_edge(main_node, peel_node)
             node_colours.append("#fca5a5")
@@ -606,7 +605,7 @@ def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
         width=1.5,
         alpha=0.95,
     )
-    nx.draw_networkx_labels(G, pos, labels=labels, font_size=8, ax=ax)
+    nx.draw_networkx_labels(G, pos, labels=labels, font_size=10, ax=ax)
 
     legend_handles = [
         mpatches.Patch(color="#f97316", label="Starting balance"),
@@ -615,16 +614,13 @@ def draw_peel_graph(peel_df: pd.DataFrame, graph_steps: int) -> plt.Figure:
     ]
     ax.legend(handles=legend_handles, loc="lower right")
     ax.set_title("Following the money through a peel chain", pad=18)
+
     ax.set_xlim(-0.8, (len(graph_df) - 1) * 3.0 + 0.8)
-    ax.set_ylim(-1.2, 0.9)
+    ax.set_ylim(-0.45, 0.75)
 
-def fig_to_png(fig):
-    """Convert a Matplotlib figure to a PNG image for Streamlit display."""
-    buf = BytesIO()
-    fig.savefig(buf, format="png", dpi=180, bbox_inches="tight")
-    buf.seek(0)
-    return buf
-
+    ax.axis("off")
+    fig.tight_layout()
+    return fig
 
 def get_consolidation_details(peel_df: pd.DataFrame) -> Optional[Dict[str, Any]]:
     """Return details for the transaction where the traced path stops by consolidation.
@@ -943,10 +939,11 @@ st.write(
     "This graph follows the continuing balance as it moves from one spent output to the next. "
     "The pink nodes show the value peeled away from the main flow at each step."
 )
-# st.pyplot(draw_peel_graph(peel_df, graph_steps=graph_steps), use_container_width=True)
-fig = draw_peel_graph(peel_df, graph_steps=graph_steps)
-st.image(fig_to_png(fig), use_container_width=True)
-plt.close(fig)
+st.pyplot(draw_peel_graph(peel_df, graph_steps=graph_steps), use_container_width=True)
+st.pyplot(
+    draw_peel_graph(peel_df, graph_steps=graph_steps),
+    use_container_width=True
+)
 
 st.subheader("2. Evidence table: step by step")
 st.write(
