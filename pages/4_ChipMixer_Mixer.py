@@ -142,7 +142,6 @@ def get_input_rows(tx: Dict[str, Any]) -> List[Dict[str, Any]]:
             "Input Index": index,
             "Input Address": address,
             "Input BTC": value_btc,
-            "Seed Address Input": address == SEED_ADDRESS,
         })
     return rows
 
@@ -157,7 +156,6 @@ def get_output_rows(tx: Dict[str, Any]) -> List[Dict[str, Any]]:
             "Output Index": index,
             "Output Address": address,
             "Output BTC": value_btc,
-            "Seed Address Output": address == SEED_ADDRESS,
         })
     return rows
 
@@ -455,7 +453,7 @@ st.markdown(
         </p>
         <p class="small-note">
             Seed address: <code>{SEED_ADDRESS}</code>
-        </p>
+        </p>W
     </div>
     """,
     unsafe_allow_html=True,
@@ -466,10 +464,10 @@ st.markdown(
     """
     <div class="case-card">
         <p>
-            In a simple Bitcoin transaction, an investigator can often ask: where did the money come from, and where did it go next? Mixers are designed to make that question much harder to answer.
+        In a simple Bitcoin transaction, an investigator can often ask: where did the money come from, and where did it go next? Mixers are designed to make that question much harder to answer.                
         </p>
         <p>
-            When many users are pooled into one transaction and sent back out through many similar outputs, the direct link between sender and receiver starts to break down. The blockchain still shows movement, but the story becomes harder to read.
+        When many users are pooled into one transaction and funds are redistributed to fresh addresses, the direct link between sender and receiver starts to break down. Many outputs are often split into small amounts with similar values, making it difficult to tell which output belongs to which participant. The blockchain still shows where the Bitcoin moved, but the money trail becomes much harder to read.
         </p>
     </div>
     """,
@@ -502,6 +500,10 @@ st.info(
 
 • The app detected **{len(repeated_values)} repeated output value groups**
 
+• Many of the outputs are small and have similar values
+
+• Participants typically receive funds back to fresh addresses rather than the addresses they originally used
+
 • This is not a simple payment. It is a mixer-style transaction pattern that deserves a closer look
 """
 )
@@ -511,21 +513,24 @@ st.markdown(
     <div class="case-card">
         <h3>What does not pass the vibe check?</h3>
         <p>
-            The selected transaction does not behave like a normal one-to-one payment. It combines many inputs and creates many outputs, including repeated output values that look deliberately standardised.
+        The selected transaction does not behave like a normal one-to-one payment. It combines funds from many participants and redistributes them across a large number of outputs, including repeated output values that appear deliberately standardised.
         </p>
         <p>
-            This matters because repeated output sizes make it harder to directly match one input participant to one output recipient. The funds are still visible on the blockchain, but the simple money trail becomes much harder to follow.
-        </p>
+        This matters because repeated output sizes and fresh receiving addresses make it much harder to directly match one participant's input to their final output. The funds remain visible on the blockchain, but the simple money trail becomes far more difficult to follow.        </p>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-st.subheader("1. Mixer-style transaction graph")
+st.subheader("1. Mixer-style transaction diagram")
 st.write(
     "This graph simplifies the transaction so the pattern is easier to clock. "
-    "Many inputs are pooled into one transaction, then redistributed into many outputs. "
-    "The repeated output amounts are the key clue: they make it harder to link one sender to one receiver."
+    "Many inputs are pooled into one transaction before being redistributed across many outputs."
+)
+
+st.info(
+    "Clock it: several outputs have similar values, and participants typically receive funds back to fresh addresses. "
+    "These features make it harder to connect one sender to one receiver."
 )
 st.pyplot(draw_mixer_structure_graph(selected_tx), use_container_width=True)
 
