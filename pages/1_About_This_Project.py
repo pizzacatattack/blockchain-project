@@ -148,8 +148,8 @@ st.header("Development note")
 
 st.write(
     "This student project was developed with assistance from OpenAI's ChatGPT."
-    "ChatGPT was used during development for coding, debugging, feature implementation, visualisation design, brainstorming, technical explanations and editing support."
-
+    "ChatGPT was used for coding, debugging, feature implementation, visualisation design, brainstorming, technical explanations and editing support."
+)
 st.divider()
 
 st.caption(
