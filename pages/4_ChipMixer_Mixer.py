@@ -444,13 +444,14 @@ st.markdown(
     <div class="case-card">
         <h3>Case focus</h3>
         <p>
-            ChipMixer was a cryptocurrency mixer designed to make tracing more difficult. Instead of a simple payment from one address to another, mixer-style activity pools funds together and redistributes them across many outputs.
+        "ChipMixer was a cryptocurrency mixer designed to make tracing more difficult. "
+        </p>
+         <p>
+        "Instead of a simple payment from one address to another, funds from many users are combined into a large pool and then redistributed. "
+        "Participants receive their Bitcoin back to fresh addresses, while the transaction often creates many small outputs with similar values. "
         </p>
         <p>
-            This case study uses a ChipMixer-linked seed address to locate a transaction that does not look like ordinary wallet activity. The transaction contains many inputs, many outputs and repeated output values, which makes it harder to match one sender to one receiver.
-        </p>
-        <p>
-            The goal is not to identify the owner of every address. The goal is to clock the structure of the transaction and understand why mixers can make the money trail harder to follow.
+        "The goal is to make it harder for investigators to connect a sender's original address to their new receiving address."
         </p>
         <p class="small-note">
             Seed address: <code>{SEED_ADDRESS}</code>
