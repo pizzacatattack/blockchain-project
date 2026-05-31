@@ -435,7 +435,7 @@ def draw_mixer_structure_graph(tx: Dict[str, Any]) -> plt.Figure:
 # App UI
 # -----------------------------
 st.title("₿ ChipMixer: mixing behaviour")
-st.caption("A Bitcoin tracing case study showing how mixers make it harder to follow the money.")
+st.caption("Follows the money through a mixer-style transaction to show how the simple money trail starts to break down.")
 
 st.markdown(
     f"""
