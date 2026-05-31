@@ -193,7 +193,7 @@ def transaction_score(tx: Dict[str, Any]) -> float:
     repeated_outputs = repeated_df[repeated_df["Count"] >= 2]
     max_repeat_count = int(repeated_df["Count"].max()) if not repeated_df.empty else 0
 
-    seed_involved = any(row["Seed Address Input"] for row in inputs) or any(row["Seed Address Output"] for row in outputs)
+    seed_involved = any(row["Input Address"] == SEED_ADDRESS for row in inputs) or any(row["Output Address"] == SEED_ADDRESS for row in outputs)
 
     score = 0
 
