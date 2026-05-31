@@ -1,7 +1,8 @@
 """
 ChipMixer Mixer Case Study
 
-This Streamlit app starts from a ChipMixer-linked coordinator-fee style address.
+This Streamlit app starts from a ChipMixer-linked coordinator-fee style address
+from the paper.
 
 The goal is to find and display one transaction with strong mixer-like
 structure:
@@ -60,6 +61,20 @@ st.markdown(
         padding: 1rem 1.2rem;
         background: rgba(250, 250, 250, 0.04);
         margin-bottom: 1rem;
+    }
+    .btc-coin {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        font-weight: 800;
+        color: white;
+        background: radial-gradient(circle at 30% 30%, #ffd166, #f7931a 65%, #b45309);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+        margin-bottom: 0.5rem;
     }
     </style>
     """,
@@ -142,7 +157,6 @@ def get_input_rows(tx: Dict[str, Any]) -> List[Dict[str, Any]]:
             "Input Index": index,
             "Input Address": address,
             "Input BTC": value_btc,
-            "Seed Address Input": address == SEED_ADDRESS,
         })
     return rows
 
@@ -157,7 +171,6 @@ def get_output_rows(tx: Dict[str, Any]) -> List[Dict[str, Any]]:
             "Output Index": index,
             "Output Address": address,
             "Output BTC": value_btc,
-            "Seed Address Output": address == SEED_ADDRESS,
         })
     return rows
 
@@ -402,7 +415,7 @@ def draw_mixer_structure_graph(tx: Dict[str, Any]) -> plt.Figure:
 
     # Title and summary
     ax.set_title(
-        "Mixer-style transaction: pooled inputs and repeated outputs",
+        "Mixer-style transaction: pooled inputs and repeated output amounts",
         fontsize=15,
         pad=18,
     )
@@ -410,7 +423,7 @@ def draw_mixer_structure_graph(tx: Dict[str, Any]) -> plt.Figure:
     ax.text(
         -0.5,
         -2.8,
-        f"Summary: {len(inputs)} inputs → 1 mixer-style transaction → {len(outputs)} outputs.",
+        f"Summary: {len(inputs)} inputs → 1 transaction → {len(outputs)} outputs.",
         ha="center",
         va="center",
         fontsize=11,
@@ -436,23 +449,24 @@ def draw_mixer_structure_graph(tx: Dict[str, Any]) -> plt.Figure:
 # -----------------------------
 # App UI
 # -----------------------------
-st.title("₿ ChipMixer: mixing behaviour")
-st.caption("A Bitcoin tracing case study showing how mixers make it harder to follow the money.")
+st.markdown('<div class="btc-coin">₿</div>', unsafe_allow_html=True)
+st.title(CASE_NAME)
+st.caption("A Bitcoin tracing case study showing how mixer-style transactions weaken direct ownership tracing.")
 
 st.markdown(
     f"""
     <div class="case-card">
         <h3>Case focus</h3>
         <p>
-            ChipMixer was a cryptocurrency mixer designed to make tracing more difficult. Instead of a simple payment from one address to another, mixer-style activity pools funds together and redistributes them across many outputs.
+            This case study explores mixer behaviour using ChipMixer-style transaction patterns. Bitcoin sent into a mixer is designed to be separated from its original transaction history.
+            Users could then withdraw equivalent Bitcoin to fresh addresses, making the connection between deposit and withdrawal much harder to trace.
         </p>
         <p>
-            This case study uses a ChipMixer-linked seed address to locate a transaction that does not look like ordinary wallet activity. The transaction contains many inputs, many outputs and repeated output values, which makes it harder to match one sender to one receiver.
+            The focus is not to prove the owner of every address. The focus is to show how many-input,
+            many-output transactions with repeated output values can make simple tracing and common-input
+            ownership assumptions unreliable.
         </p>
         <p>
-            The goal is not to identify the owner of every address. The goal is to clock the structure of the transaction and understand why mixers can make the money trail harder to follow.
-        </p>
-        <p class="small-note">
             Seed address: <code>{SEED_ADDRESS}</code>
         </p>
     </div>
@@ -465,10 +479,13 @@ st.markdown(
     """
     <div class="case-card">
         <p>
-            In a simple Bitcoin transaction, an investigator can often ask: where did the money come from, and where did it go next? Mixers are designed to make that question much harder to answer.
+            In basic Bitcoin tracing, analysts may look at transaction inputs and outputs to infer who controlled
+            which funds. Mixer transactions are designed to disrupt that logic.
         </p>
         <p>
-            When many users are pooled into one transaction and sent back out through many similar outputs, the direct link between sender and receiver starts to break down. The blockchain still shows movement, but the story becomes harder to read.
+            When a transaction combines many inputs and creates many similar outputs, it becomes harder to map
+            one input to one output. It also weakens simple tracing assumptions, because the funds may
+            have been pooled and redistributed rather than moving as a simple direct payment.
         </p>
     </div>
     """,
@@ -491,54 +508,53 @@ repeated_df = repeated_output_summary(outputs, decimals=8)
 repeated_values = repeated_df[repeated_df["Count"] >= 2]
 total_output_btc = sum(row["Output BTC"] for row in outputs)
 
-st.info(
-    f"""
-**What should you clock?**
-
-• The selected transaction pools **{len(inputs)} inputs** into one transaction
-
-• It then redistributes value across **{len(outputs)} outputs**
-
-• The app detected **{len(repeated_values)} repeated output value groups**
-
-• This is not a simple payment. It is a mixer-style transaction pattern that deserves a closer look
-"""
-)
+col1, col2, col3, col4, col5 = st.columns(5)
+col1.metric("Transactions analysed", len(address_txs))
+col2.metric("Transaction inputs", len(inputs))
+col3.metric("Transaction outputs", len(outputs))
+col4.metric("Repeated output groups", len(repeated_values))
+col5.metric("Total output BTC", f"{total_output_btc:.4f}")
 
 st.markdown(
     f"""
     <div class="case-card">
-        <h3>What does not pass the vibe check?</h3>
+        <h3>Key finding</h3>
         <p>
-            The selected transaction does not behave like a normal one-to-one payment. It combines many inputs and creates many outputs, including repeated output values that look deliberately standardised.
+            The selected transaction contains <strong>{len(inputs)} inputs</strong> and
+            <strong>{len(outputs)} outputs</strong>, showing pooled movement rather than a simple payment.
         </p>
         <p>
-            This matters because repeated output sizes make it harder to directly match one input participant to one output recipient. The funds are still visible on the blockchain, but the simple money trail becomes much harder to follow.
+            The strongest signal is the repeated output denominations. The app detected
+            <strong>{len(repeated_values)} repeated output value groups</strong>, including repeated standard-sized outputs.
+        </p>
+        <p>
+            This matters because repeated output sizes make it harder to directly match one input participant
+            to one output recipient. A participant may receive value back as several smaller outputs instead of one.
         </p>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-st.subheader("1. Mixer-style transaction graph")
+st.subheader("1. Simplified mixer-style transaction graph")
 st.write(
-    "This graph simplifies the transaction so the pattern is easier to clock. "
-    "Many inputs are pooled into one transaction, then redistributed into many outputs. "
-    "The repeated output amounts are the key clue: they make it harder to link one sender to one receiver."
+    "This simplified graph groups the inputs and outputs so the transaction is easier to read. "
+    "The main point is that funds are pooled into one transaction, then redistributed into many outputs. "
+    "Dark green nodes show repeated BTC amounts, which make it harder to link one input to one output."
 )
 st.pyplot(draw_mixer_structure_graph(selected_tx), use_container_width=True)
 
 st.subheader("2. Selected transaction summary")
 st.dataframe(build_transaction_summary(selected_tx), use_container_width=True, hide_index=True)
 
-st.subheader("3. Repeated output values")
+st.subheader("3. Repeated output value summary (key evidence)")
 st.write(
-    "This table shows the repeated BTC amounts found across the outputs. "
-    "Repeated values can make the outputs look more alike, which makes the transaction harder to untangle."
+    "This table is the strongest evidence in this case. It shows repeated BTC denominations across many outputs, "
+    "which is consistent with redistribution in standard-sized chunks."
 )
 st.dataframe(repeated_df.head(20), use_container_width=True, hide_index=True)
 
-st.subheader("4. Seed address summary")
+st.subheader("4. Address summary")
 st.dataframe(build_address_summary(SEED_ADDRESS, address_info, address_txs), use_container_width=True, hide_index=True)
 
 with st.expander("Show selected transaction inputs and outputs"):
@@ -553,10 +569,9 @@ st.markdown(
     """
     <div class="case-card">
         <p>
-            Blockchain tracing is a powerful tool, but it is not a crystal ball. This case study highlights transaction structure: many inputs, many outputs and repeated output values.
-        </p>
-        <p>
-            These patterns can point investigators in the right direction, but they do not prove who controlled each address or whether every participant was acting unlawfully.
+            Blockchain tracing shows transaction movement, not real-world identity. In this case, the graph
+            highlights structure: many inputs, many outputs and repeated output values. These are tracing
+            complications rather than proof of who controlled each address.
         </p>
     </div>
     """,
