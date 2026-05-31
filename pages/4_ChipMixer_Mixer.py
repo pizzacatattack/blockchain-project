@@ -513,7 +513,7 @@ st.markdown(
     <div class="case-card">
         <h3>What does not pass the vibe check?</h3>
         <p>
-        The selected transaction does not behave like a normal one-to-one payment. It combines funds from many participants and redistributes them across a large number of outputs, including repeated output values that appear deliberately standardised.
+        The selected transaction does not behave like a normal one-to-one payment. It combines funds from many participants and redistributes them across a large number of outputs. Many of the outputs look very similar, making the money trail harder to read.
         </p>
         <p>
         This matters because repeated output sizes and fresh receiving addresses make it much harder to directly match one participant's input to their final output. The funds remain visible on the blockchain, but the simple money trail becomes far more difficult to follow.        </p>
