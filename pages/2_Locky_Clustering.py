@@ -438,8 +438,7 @@ st.markdown(
     <div class="case-card">
         <h3>Case focus</h3>
         <p>
-            Locky was one of the biggest ransomware families of its time. Victims were instructed to pay a ransom in Bitcoin,
-            creating a trail that investigators could later examine on the blockchain.
+            Locky was one of the biggest ransomware families of its time. Victims were instructed to pay a ransom in Bitcoin, creating a trail that investigators could later examine on the blockchain. A unique Bitcoin address was typically generated for each victim, producing a large collection of related addresses that can now be explored using blockchain tracing techniques.
         </p>
         <p>
             This case study begins with a Bitcoin address associated with Locky and follows the money through a larger
