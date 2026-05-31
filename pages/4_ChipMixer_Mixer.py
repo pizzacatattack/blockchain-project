@@ -453,7 +453,7 @@ st.markdown(
         </p>
         <p class="small-note">
             Seed address: <code>{SEED_ADDRESS}</code>
-        </p>W
+        </p>
     </div>
     """,
     unsafe_allow_html=True,
