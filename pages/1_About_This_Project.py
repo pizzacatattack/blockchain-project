@@ -123,7 +123,7 @@ st.markdown("""
 Blockchain tracing is a powerful tool, but it is not a crystal ball.
 
 - **Addresses are not people.** A Bitcoin address does not directly identify a person, company or criminal group.
-- **Patterns are clues, not proof.** The blockchain can point investigators in the right direction, but it rarely provides all the answers.
+- **Patterns are clues, not proof.** The blockchain can point investigators in the right direction, but it does not provide all the answers.
 - **Not every transaction passes the vibe check.** Some unusual-looking transactions have perfectly innocent explanations.
 - **Some users are better at hide and seek than others.** Techniques such as mixers, peel chains and privacy-focused cryptocurrencies can make tracing more difficult.
 - **Investigators use more than just the blockchain.** On-chain analysis is often combined with off-chain investigation techniques.
@@ -136,19 +136,19 @@ st.markdown("""
 Possible future improvements include:
 
 - automatic "does this pass the vibe check?" scoring
-- suspicious activity summaries for user-entered addresses
 - additional ransomware and hack case studies
-- improved transaction network visualisations
+- clearer visualisations showing how money moves
+- improved handling of busy Bitcoin addresses with lots of transactions
 - exportable investigation reports
-- better support for large and complex transaction histories
+
             
 """)
 
 st.header("Development note")
 
 st.write(
-    "This student project was developed as an AI-assisted blockchain tracing application, with AI used as a development support tool for coding, implementation and debugging."
-)
+    "This student project was developed with assistance from OpenAI's ChatGPT."
+    "ChatGPT was used during development for coding, debugging, feature implementation, visualisation design, brainstorming, technical explanations and editing support."
 
 st.divider()
 
