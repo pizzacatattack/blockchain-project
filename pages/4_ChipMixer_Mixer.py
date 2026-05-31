@@ -444,14 +444,14 @@ st.markdown(
     <div class="case-card">
         <h3>Case focus</h3>
         <p>
-        "ChipMixer was a cryptocurrency mixer designed to make tracing more difficult. "
+        ChipMixer was a cryptocurrency mixer designed to make tracing more difficult.
         </p>
          <p>
-        "Instead of a simple payment from one address to another, funds from many users are combined into a large pool and then redistributed. "
-        "Participants receive their Bitcoin back to fresh addresses, while the transaction often creates many small outputs with similar values. "
+        Instead of a simple payment from one address to another, funds from many users are combined into a large pool and then redistributed. 
+        Participants receive their Bitcoin back to fresh addresses, while the transaction often creates many small outputs with similar values. 
         </p>
         <p>
-        "The goal is to make it harder for investigators to connect a sender's original address to their new receiving address."
+        The goal is to make it harder for investigators to connect a sender's original address to their new receiving address.
         </p>
         <p class="small-note">
             Seed address: <code>{SEED_ADDRESS}</code>
