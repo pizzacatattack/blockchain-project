@@ -842,7 +842,7 @@ st.markdown(
     <div class="case-card">
         <h3>How this trace works</h3>
         <p>
-            This page follows one specific Bitcoin output linked to Conti. The app checks
+            This page follows one specific Bitcoin output, also known as a UTXO. The app checks
             whether that output was spent, opens the transaction that spent it and then follows
             the largest continuing output into the next step.
         </p>
@@ -920,7 +920,7 @@ st.markdown(
     <div class="case-card">
         <h3>Why this does not pass the vibe check</h3>
         <p>
-            The main balance keeps moving forward again and again, and smaller amounts are separated along the way.
+            The main balance keeps movimg forward again and again, and smaller amounts are separated along the way.
             Thhe repeated pattern is what makes this look like a peel chain.
         </p>
         <p>
