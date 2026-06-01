@@ -843,7 +843,7 @@ st.markdown(
         <h3>How this trace works</h3>
         <p>
         This page follows one specific output connected to the Conti Bitcoin address used for this case study. 
-        The app checks whether that output was spent, opens the transaction that spent it and foll then follows the largest continuing output into the next step.
+        The app checks whether that output was spent, opens the transaction that spent it and then follows the largest continuing output into the next step.
         </p>
         <p>
         At each step a small amount is “peeled off” and the rest of the balance is sent to a new address. 
