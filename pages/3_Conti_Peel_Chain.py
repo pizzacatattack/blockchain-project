@@ -847,8 +847,8 @@ st.markdown(
         </p>
         <p>
         At each step a small amount is “peeled off” and the rest of the balance is sent to a new address. 
-        This process is repated many times, and the continuing balance keeps getting smaller and smaller. This is what creates the peel chain pattern.
-        Criminal operators like Conti may use peel chains to make it difficult for investigators to trace the funds back to their original source 
+        This process is repeated many times, and the continuing balance keeps getting smaller and smaller. This is what creates the peel chain pattern.
+        Criminal operators like Conti may use peel chains to make it difficult for investigators to trace funds back to their original source 
         </p>
     </div>
     """,
