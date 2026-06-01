@@ -442,7 +442,7 @@ st.markdown(
         </p>
         <p>
             This case study begins with a Bitcoin address associated with Locky and follows the money through a larger
-            consolidation transaction. Investigators can group the addresses to together to see which ones may have been controlled by the same operator.
+            consolidation transaction. Investigators can group the addresses together to see which ones may have been controlled by the same operator.
         </p>
         <p>
             This is where clustering becomes a useful starting point for blockchain hide and seek.
@@ -466,7 +466,7 @@ st.markdown(
             that the same person or group controls them.
         </p>
         <p>
-            This is because spending from an address normally requires access to its private key, and these are meant to be kept secret from others. Like all heuristics,
+            This is because spending from an address normally requires access to its private key, and these are meant to be kept a secret from others. Like all heuristics,
             this is a clue rather than proof, but it can be a strong place to start when trying to clock related addresses.
         </p>
     </div>
@@ -500,8 +500,6 @@ st.info(
 • One dominant output
 
 • Very small change output
-
-• Strong clustering signal
 """
 )
 
