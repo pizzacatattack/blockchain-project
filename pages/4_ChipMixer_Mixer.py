@@ -445,8 +445,8 @@ st.markdown(
         ChipMixer was a cryptocurrency mixer designed to make tracing more difficult.
         </p>
          <p>
-        Instead of a simple payment from one address to another, funds from many users are combined into a large pool and then redistributed. 
-        Participants receive their Bitcoin back to fresh addresses, while the transaction often creates many small outputs with similar values. 
+         Instead of a simple transaction where one user sends funds to another, a mixer combines inputs from many users into one big pool. 
+        The mixer then produces several small outputs of similar values and sends them to new addresses belonging to the mixer participants. 
         </p>
         <p>
         The goal is to make it harder for investigators to connect a sender's original address to their new receiving address.
@@ -467,7 +467,7 @@ st.markdown(
         In a simple Bitcoin transaction, an investigator can often ask: where did the money come from, and where did it go next? Mixers are designed to make that question much harder to answer.                
         </p>
         <p>
-        When many users are pooled into one transaction and funds are redistributed to fresh addresses, the direct link between sender and receiver starts to break down. Many outputs are often split into small amounts with similar values, making it difficult to tell which output belongs to which participant. The blockchain still shows where the Bitcoin moved, but the money trail becomes much harder to read.
+        The link between the original sender and the receiver begins to break down when When many users are pooled into one transaction and funds are redistributed to new addresses. Many outputs are often split into small amounts with similar values, making it difficult to tell which output belongs to which participant. The blockchain still shows where the Bitcoin moved, but the money trail becomes much harder to read.
         </p>
     </div>
     """,
@@ -502,7 +502,7 @@ st.info(
 
 • Many of the outputs are small and have similar values
 
-• Participants typically receive funds back to fresh addresses rather than the addresses they originally used
+• Participants typically receive funds back to new addresses rather than the addresses they originally used
 
 • This is not a simple payment. It is a mixer-style transaction pattern that deserves a closer look
 """
@@ -513,10 +513,11 @@ st.markdown(
     <div class="case-card">
         <h3>What does not pass the vibe check?</h3>
         <p>
-        The selected transaction does not behave like a normal one-to-one payment. It combines funds from many participants and redistributes them across a large number of outputs. Many of the outputs look very similar, making the money trail harder to read.
+        The selected transaction does not behave like a normal one-to-one payment. It combines funds from many participants and redistributes them across a large number of outputs that are of a similar value. 
         </p>
         <p>
-        This matters because repeated output sizes and fresh receiving addresses make it much harder to directly match one participant's input to their final output. The funds remain visible on the blockchain, but the simple money trail becomes far more difficult to follow.        </p>
+        This matters because repeated output sizes and new receiving addresses make it much harder to connect a participant's input to their final output. The funds remain visible on the blockchain but the money trail becomes far more difficult to follow.       
+        </p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -529,7 +530,7 @@ st.write(
 )
 
 st.info(
-    "Clock it: several outputs have similar values, and participants typically receive funds back to fresh addresses. "
+    "Clock it: several outputs have similar values, and participants typically receive funds back to new addresses. "
     "These features make it harder to connect one sender to one receiver."
 )
 st.pyplot(draw_mixer_structure_graph(selected_tx), use_container_width=True)
