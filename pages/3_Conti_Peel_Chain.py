@@ -815,18 +815,16 @@ st.markdown(
         <h3>Case focus</h3>
         <p>
             Conti was one of the most prolific ransomware groups active during 2020 and 2021.
-            This case study starts with a Bitcoin address linked to Conti and follows a high-value
+            This case study starts with a Bitcoin address linked to Conti and follows a large
             output as it moves through the blockchain.
         </p>
         <p>
-            The pattern shown here is a peel chain. Instead of moving one large balance directly,
-            the main balance keeps moving forward while smaller amounts are peeled away at each step.
+            The pattern shown here is a peel chain. At each step a small amount is “peeled off” and the rest of the balance is sent to a new address. 
+            This action is repeated, and the continuing balance gets smaller and smaller each time. 
             This can make the money trail harder to follow and harder to explain.
         </p>
         <p>
-            The goal is not to prove who controlled every later address. The goal is to watch the
-            pattern unfold, clock the repeated behaviour and understand why peel chains are useful
-            in blockchain tracing.
+            The goal here is to clock the pattern to understand why peel chains are useful in blockchain tracing.         
         </p>
         <p class="small-note">
             Seed address used for this case: <code>{SEED_ADDRESS}</code>
@@ -922,12 +920,12 @@ st.markdown(
     <div class="case-card">
         <h3>Why this does not pass the vibe check</h3>
         <p>
-            The main balance moves forward again and again, while smaller amounts are separated along the way.
-            That repeated pattern is what makes this look like a peel chain.
+            The main balance keeps movimg forward again and again, and smaller amounts are separated along the way.
+            Thhe repeated pattern is what makes this look like a peel chain.
         </p>
         <p>
-            The important clue is not one single transaction. It is the behaviour across the path: spend the current
-            output, create a new continuing output, peel value away and repeat.
+            The important clue is not one single transaction. It is the behaviour along the path: spend the current
+            output, create a new continuing output, peel a value away and repeat.
         </p>
     </div>
     """,
@@ -937,7 +935,7 @@ st.markdown(
 st.subheader("1. Peel chain phase")
 st.write(
     "This graph follows the continuing balance as it moves from one spent output to the next. "
-    "The pink nodes show the value peeled away from the main flow at each step."
+    "The pink nodes show the value peeled away from the main balance at each step."
 )
 st.pyplot(draw_peel_graph(peel_df, graph_steps=graph_steps), use_container_width=True)
 
@@ -972,8 +970,8 @@ if consolidation is None:
 else:
     st.write(
         f"The trail does not end with the peel chain. The final traced output of approximately "
-        f"{btc_short(consolidation['traced_btc'], 1)} is later swept into a much larger consolidation transaction. "
-        f"At this point, the Bitcoin is still visible on the blockchain, but the story becomes less clear."
+        f"{btc_short(consolidation['traced_btc'], 1)} is later combined into a much larger consolidation transaction. "
+        f"At this point, the Bitcoin is still visible on the blockchain but the story becomes less clear."
     )
 
     final_spending_txid = peel_df.iloc[-1]["Spending Transaction"]
