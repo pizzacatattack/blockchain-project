@@ -446,7 +446,7 @@ st.markdown(
         </p>
          <p>
          Instead of a simple transaction where one user sends funds to another, a mixer combines inputs from many users into one big pool. 
-        The mixer then produces several small outputs of similar values and sends them to new addresses belonging to the mixer participants. 
+        The mixer then produces several small outputs of similar value and sends them to new addresses belonging to the mixer participants. 
         </p>
         <p>
         The goal is to make it harder for investigators to connect a sender's original address to their new receiving address.
