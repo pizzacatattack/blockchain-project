@@ -438,15 +438,13 @@ st.markdown(
     <div class="case-card">
         <h3>Case focus</h3>
         <p>
-            Locky was one of the biggest ransomware families of its time. Victims were instructed to pay a ransom in Bitcoin, creating a trail that investigators could later examine on the blockchain. A unique Bitcoin address was typically generated for each victim, producing a large collection of related addresses that can now be explored using blockchain tracing techniques.
+            Locky was one of the biggest ransomware families of its time. A unique Bitcoin address was typically generated for each victim to use for their ransomware payment. This means there are lots of Locky-related addresses on the blockchain, and makes Locky a useful example for clustering analysis.
         </p>
         <p>
             This case study begins with a Bitcoin address associated with Locky and follows the money through a larger
-            consolidation transaction. By looking at which addresses were used together, investigators can build a picture of
-            which wallets may have been controlled by the same operator group.
+            consolidation transaction. Investigators can group the addresses to together to see which ones may have been controlled by the same operator.
         </p>
         <p>
-            The goal is not to prove ownership. The goal is to identify transaction patterns that deserve a closer look.
             This is where clustering becomes a useful starting point for blockchain hide and seek.
         </p>
     </div>
@@ -465,10 +463,10 @@ st.markdown(
         <p>
             The Common Input Ownership Heuristic is one of the classic blockchain tracing vibe checks.
             If multiple Bitcoin addresses are used together as inputs in the same transaction, investigators may infer
-            that the same person, wallet or group controls them.
+            that the same person or group controls them.
         </p>
         <p>
-            The idea is simple: spending from an address normally requires access to its private key. Like all heuristics,
+            This is because spending from an address normally requires access to its private key, and these are meant to be kept secret from others. Like all heuristics,
             this is a clue rather than proof, but it can be a strong place to start when trying to clock related addresses.
         </p>
     </div>
@@ -514,7 +512,7 @@ st.markdown(
     <p>
     Thirty Locky-associated addresses were used together as inputs in one Bitcoin transaction.
     Under the Common Input Ownership Heuristic, this is a strong clue that the addresses may have been
-    controlled by the same wallet or operator group.
+    controlled by the same person or operator.
     </p>
     <p>
     This does not prove who controlled the addresses, but it is unusual enough to deserve a closer look.
@@ -547,7 +545,7 @@ st.pyplot(draw_cioh_graph(cioh_graph, shared_tx_node))
 
 st.subheader("3. Where did the 80 BTC go next?")
 st.write(
-    "The 80 BTC output address did not remain idle for long. It later appeared in a much larger transaction involving several additional inputs. The money trail is still visible, but the story becomes less clear from this point onwards. Investigators can continue following the Bitcoin, however it becomes harder to determine who controls the later addresses."
+    "The 80 BTC output address was not inactive for long. It later appeared in a much larger transaction involving lots of other inputs. The money trail is still visible, but the story becomes less clear from this point onwards. Investigators can continue following the Bitcoin but it becomes harder to clock who controls the later addresses."
 )
 follow_graph = build_follow_on_graph(df_follow_inputs, df_follow_outputs)
 st.pyplot(draw_follow_on_graph(follow_graph))
@@ -556,7 +554,7 @@ st.info(
     f"""
 **What happened next?**
 
-The trail does not end here. The 80 BTC output later appeared in a much larger transaction involving several additional inputs.
+The trail does not end here. The 80 BTC output later appeared in a much larger transaction involving many other inputs.
 """
 )
 
@@ -614,7 +612,7 @@ trace_rows = [
 ]
 
 st.dataframe(pd.DataFrame(trace_rows), use_container_width=True, hide_index=True)
-st.caption("Beyond the original Locky-associated cluster, the money trail is still visible, but attribution becomes less certain because the later wallets were not labelled in the ransomware dataset.")
+st.caption("The money trail is still visible past the original Locky cluster but patterns and clues are not proof.")
 
 st.markdown(
     """
@@ -626,7 +624,7 @@ st.markdown(
     The largest later output was 500 BTC.
     </p>
     <p class="small-note">
-    This is a good example of the blockchain hide and seek problem: the funds can still be followed, but it becomes harder to know who controls the later wallets.
+    This is a good example of the blockchain hide and seek problem: the funds can still be followed but it becomes harder to know who controls the other addresses.
     </p>
     </div>
     """,
@@ -656,7 +654,7 @@ summary_rows = [
     },
     {
         "Step": "2. CIOH evidence",
-        "What happened": "The 30 input addresses were spent together, creating a strong clustering clue.",
+        "What happened": "The 30 input addresses were spent together, which fits the clustering vibe check.",
         "BTC": f"{numbers['total_input_btc']:.4f} BTC combined",
     },
     {
