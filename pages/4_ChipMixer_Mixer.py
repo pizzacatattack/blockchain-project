@@ -467,7 +467,7 @@ st.markdown(
         In a simple Bitcoin transaction, an investigator can often ask: where did the money come from, and where did it go next? Mixers are designed to make that question much harder to answer.                
         </p>
         <p>
-        The link between the original sender and the receiver begins to break down when When many users are pooled into one transaction and funds are redistributed to new addresses. Many outputs are often split into small amounts with similar values, making it difficult to tell which output belongs to which participant. The blockchain still shows where the Bitcoin moved, but the money trail becomes much harder to read.
+        The link between the original sender and the receiver begins to break down when many users are pooled into one transaction and funds are redistributed to new addresses. Many outputs are often split into small amounts with similar values, making it difficult to tell which output belongs to which participant. The blockchain still shows where the Bitcoin moved, but the money trail becomes much harder to read.
         </p>
     </div>
     """,
