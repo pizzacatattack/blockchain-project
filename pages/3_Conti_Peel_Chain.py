@@ -842,14 +842,13 @@ st.markdown(
     <div class="case-card">
         <h3>How this trace works</h3>
         <p>
-            This page follows one specific Bitcoin output linked to Conti. The app checks
-            whether that output was spent, opens the transaction that spent it and then follows
-            the largest continuing output into the next step.
+        This page follows one specific output connected to the Conti Bitcoin address used for this case study. 
+        The app checks whether that output was spent, opens the transaction that spent it and foll then follows the largest continuing output into the next step.
         </p>
         <p>
-            The peeled amount is the difference between the balance entering a step and the
-            continuing balance leaving that step. In plain English: what moved on, and what got
-            peeled away?
+        At each step a small amount is “peeled off” and the rest of the balance is sent to a new address. 
+        This process is repated many times, and the continuing balance keeps getting smaller and smaller. This is what creates the peel chain pattern.
+        Criminal operators like Conti may use peel chains to make it difficult for investigators to trace the funds back to their original source 
         </p>
     </div>
     """,
